@@ -6,7 +6,7 @@
 ## Getting Started
 
 1. Flutter SDK 버전: 3.29.2
-2. Dart SDK qㅓ전: 3.7.2
+2. Dart SDK 버전: 3.7.2
 3. 빌드 OS: Android, iOS, Web
 4. IDE: Android Studio, VS Code, Xcode
 5. 패키지 관리: Flutter pub

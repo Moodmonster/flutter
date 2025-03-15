@@ -1,0 +1,28 @@
+import 'package:flutter/material.dart';
+
+@immutable 
+class AppColors {
+  const AppColors._();
+
+  /// Main Black 333333
+  static const Color black = Color(0xFF333333);
+  /// Light Black 555555
+  static const Color lightBlack = Color(0xFF555555);
+  /// custom white
+  static const Color white = Color(0xFFFDFDFD);
+  /// light Grey
+  static const Color lightGrey = Color(0xFFF3F3F3);
+  /// Dark Grey
+  static const Color darkGrey = Color(0xFF777777);
+  /// deactive color
+  static const Color deactive = Color(0xFFC5C5BF);
+  /// deactive Gray color
+  static const Color deActiveGray = Color(0xFFC2C2C2);
+
+  /// primary
+  static const Color primary = Color(0xFFF7E172);
+  /// light primary
+  static const Color lightPrimary = Color(0xFFFCF4CE);
+  /// secondary
+  static const Color secondary = Color(0xFFCAE734);
+}

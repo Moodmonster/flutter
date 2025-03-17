@@ -1,0 +1,2 @@
+D:/Moodmonster/flutter/android/app/.cxx/Debug/311v4h4u/x86/CMakeFiles/edit_cache.dir
+D:/Moodmonster/flutter/android/app/.cxx/Debug/311v4h4u/x86/CMakeFiles/rebuild_cache.dir

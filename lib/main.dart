@@ -24,9 +24,7 @@ class MoodMonster extends StatelessWidget {
         builder: (context, child) {
           return Center(
             child: ConstrainedBox(
-              constraints: const BoxConstraints(
-                maxWidth: 420,
-              ),
+              constraints: const BoxConstraints(maxWidth: 420),
               child: MaterialApp(
                 debugShowCheckedModeBanner: false,
                 title: 'Mood Monster',

@@ -1,15 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:moodmonster/app_bootstrapper.dart';
-import 'package:moodmonster/common/mood_colors.dart';
-import 'package:moodmonster/common/mood_fonts.dart';
-import 'package:moodmonster/config/routes/app_router.dart';
 import 'package:moodmonster/feature/home/home_screen_view.dart';
-import 'package:moodmonster/helpers/constants/app_themes.dart';
-import 'package:moodmonster/pages/novel.page_view.dart';
-import 'package:moodmonster/pages/webtoon.page_view.dart';
-import 'package:seo_renderer/seo_renderer.dart';
+import 'package:moodmonster/helpers/constants/app_colors.dart';
 
 class MoodMonsterMainScreen extends StatefulWidget {
   const MoodMonsterMainScreen({super.key});
@@ -30,21 +21,21 @@ class _MainScreenState extends State<MoodMonsterMainScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        backgroundColor: MoodColors.background,
+        backgroundColor: AppColors.background,
         body: HomeScreen(),
         //하단 네비게이션바
         bottomNavigationBar: BottomNavigationBar(
           type: BottomNavigationBarType.fixed,
           showUnselectedLabels: true,
-          unselectedItemColor: MoodColors.hintGrey,
-          backgroundColor: MoodColors.background,
-          selectedItemColor: MoodColors.mainTextColor,
-      
+          unselectedItemColor: AppColors.lightBlack,
+          backgroundColor: AppColors.background,
+          selectedItemColor: AppColors.mainTextColor,
+
           items: [
             BottomNavigationBarItem(
               icon: Icon(Icons.home_filled),
               label: 'home',
-              backgroundColor: MoodColors.background,
+              backgroundColor: AppColors.background,
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.bar_chart_rounded),

@@ -17,35 +17,46 @@ class MoodMonster extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RobotDetector(
-      child: ScreenUtilInit(
-        designSize: const Size(393, 852),
-        useInheritedMediaQuery: true,
-        builder: (context, child) {
-          return Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 420),
-              child: MaterialApp(
-                debugShowCheckedModeBanner: false,
-                title: 'Mood Monster',
-                theme: AppTheme.light(),
-                darkTheme: AppTheme.light(),
-                onGenerateRoute: AppRouter.generateRoute,
-                navigatorKey: AppRouter.navigatorKey,
-                navigatorObservers: [seoRouteObserver],
-                localizationsDelegates: const [
-                  GlobalMaterialLocalizations.delegate,
-                  GlobalWidgetsLocalizations.delegate,
-                  GlobalCupertinoLocalizations.delegate,
-                ],
-                supportedLocales: const [
-                  Locale('en', 'US'),
-                  Locale('ko', 'KR'),
-                ],
+    final Size realSize = MediaQuery.of(context).size;
+    final Size customSize;
+    if (realSize.width > 420) {
+      customSize = Size(420, realSize.height);
+    } else {
+      customSize = realSize;
+    }
+
+    return MediaQuery(
+      data: MediaQuery.of(context).copyWith(size: customSize),
+      child: RobotDetector(
+        child: ScreenUtilInit(
+          designSize: const Size(393, 852),
+          useInheritedMediaQuery: true,
+          builder: (context, child) {
+            return Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 420),
+                child: MaterialApp(
+                  debugShowCheckedModeBanner: false,
+                  title: 'Mood Monster',
+                  theme: AppTheme.light(),
+                  darkTheme: AppTheme.light(),
+                  onGenerateRoute: AppRouter.generateRoute,
+                  navigatorKey: AppRouter.navigatorKey,
+                  navigatorObservers: [seoRouteObserver],
+                  localizationsDelegates: const [
+                    GlobalMaterialLocalizations.delegate,
+                    GlobalWidgetsLocalizations.delegate,
+                    GlobalCupertinoLocalizations.delegate,
+                  ],
+                  supportedLocales: const [
+                    Locale('en', 'US'),
+                    Locale('ko', 'KR'),
+                  ],
+                ),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }

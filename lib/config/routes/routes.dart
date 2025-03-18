@@ -19,7 +19,8 @@ class Routes {
   static const String episodeListScreen = '/episodes';
 
   static final Map<String, Widget Function()> _routesMap = {
-    initialRoute: () => const MoodMonsterMainScreen(),
+    //initialRoute: () => const MoodMonsterMainScreen(),
+    initialRoute: () => const HomeScreen(),
     loginScreenRoute: () => const LoginScreen(),
     notFoundScreenRoute: () => const PageNotFoundScreen(),
     homeScreenRoute: () => const HomeScreen(),

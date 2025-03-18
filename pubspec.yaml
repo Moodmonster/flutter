@@ -1,7 +1,7 @@
 name: moodmonster
 description: "We are JeongtongJIB"
 
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
 version: 1.0.0+1
 
@@ -31,11 +31,11 @@ dependencies:
   seo_renderer: ^0.6.0 #seo rendering
 
   #etc
-  flutter_screenutil: ^5.9.3 #화면 사이즈 controlling
+  flutter_screenutil: 5.9.0 #화면 사이즈 controlling
   http: ^1.3.0
   cached_network_image: ^3.4.1 #web 로딩 속도 줄이기 & tick마다 새로그리기 방지
   flutter_svg: ^2.0.17 #svg 사용하기 위함
-
+  image_picker: ^1.1.2
 
 dev_dependencies:
   flutter_test:

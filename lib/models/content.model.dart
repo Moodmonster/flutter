@@ -1,26 +1,43 @@
-enum Days { mon, tue, wed, thu, fri, sat, sun }
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-class Content {
-  final int code;
-  final String title;
-  final String desc;
-  final String author;
-  final Days releaseDay;
-  final double stars;
-  final bool isAdultsOnly; //청소년관람불가 여부
-  final bool isCompleted; //완결여부
-  final String thumbnailUrl;
+part 'content.model.freezed.dart';
+part 'content.model.g.dart';
 
-  Content(
-    this.code,
-    this.title,
+enum ContentType { Webtoon, Novel }
 
-    this.desc,
-    this.author,
-    this.releaseDay,
-    this.stars,
-    this.isAdultsOnly,
-    this.isCompleted,
-    this.thumbnailUrl,
-  );
+//컨텐츠 자체에 대한 데이터/
+@freezed
+abstract class Content with _$Content {
+  factory Content({
+    required int code,
+    required String title,
+    required String desc,
+    required String author,
+    required String userId,
+    required ContentType contentType, //웹툰인지 소설인지
+    required int clickCount, //클릭수
+    required String thumbnailUrl,
+  }) = _Content;
+
+  factory Content.fromJson(Map<String, dynamic> json) =>
+      _$ContentFromJson(json);
 }
+
+// class Content {
+//   final int code;
+//   final String title;
+//   final String desc;
+//   final String author;
+//   final String userId;
+//   final ContentType contentType; //웹툰인지 소설인지
+//   final String thumbnailUrl;
+//   Content({
+//     required this.code,
+//     required this.title,
+//     required this.desc,
+//     required this.author,
+//     required this.userId,
+//     required this.contentType,
+//     required this.thumbnailUrl,
+//   });
+// }

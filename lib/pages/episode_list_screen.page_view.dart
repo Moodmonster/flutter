@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:moodmonster/common/mood_colors.dart';
-import 'package:moodmonster/common/mood_fonts.dart';
-import 'package:moodmonster/dumyData/contentDumyData.dart';
 import 'package:moodmonster/dumyData/contentEpisodeDumyData.dart';
+import 'package:moodmonster/helpers/constants/app_colors.dart';
+import 'package:moodmonster/helpers/extensions/showdialog_helper.dart';
 import 'package:moodmonster/models/content.model.dart';
 import 'package:moodmonster/models/content_episode.model.dart';
 
@@ -35,7 +34,7 @@ class EpisodeListScreen extends StatelessWidget {
     }
 
     return Scaffold(
-      backgroundColor: MoodColors.background,
+      backgroundColor: AppColors.background,
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -68,7 +67,7 @@ class EpisodeListScreen extends StatelessWidget {
                         begin: Alignment.bottomCenter,
                         end: Alignment.topCenter,
                         colors: [
-                          MoodColors.background, // 아래쪽은 짙은 검은색
+                          AppColors.background, // 아래쪽은 짙은 검은색
                           Colors.black.withOpacity(0.0), // 위쪽은 투명
                         ],
                       ),
@@ -100,7 +99,7 @@ class EpisodeListScreen extends StatelessWidget {
                         child: Text(
                           contentInfo?.title ?? "데이터 없음",
                           style: TextStyle(
-                            color: MoodColors.mainTextColor,
+                            color: AppColors.mainTextColor,
                             fontSize: 22,
                             fontWeight: FontWeight.bold,
                             decoration: TextDecoration.none,
@@ -113,7 +112,7 @@ class EpisodeListScreen extends StatelessWidget {
                         child: Text(
                           contentInfo?.author ?? "데이터 없음",
                           style: TextStyle(
-                            color: MoodColors.mainTextColor,
+                            color: AppColors.mainTextColor,
                             fontSize: 13,
                             fontWeight: FontWeight.bold,
                             decoration: TextDecoration.none,
@@ -161,6 +160,16 @@ class EpisodeListScreen extends StatelessWidget {
           ],
         ),
       ),
+      //목차 추가 버튼
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
+        child: Icon(Icons.add, color: AppColors.background),
+        elevation: 10,
+        backgroundColor: AppColors.mainTextColor,
+
+        shape: CircleBorder(),
+      ),
     );
   }
 }
@@ -175,7 +184,7 @@ class EpisodeListItem extends StatelessWidget {
       decoration: BoxDecoration(
         color: Color.fromARGB(217, 49, 49, 49),
         border: Border(
-          bottom: BorderSide(width: 1, color: MoodColors.hintGrey),
+          bottom: BorderSide(width: 1, color: AppColors.lightBlack),
         ),
       ),
       child: ListTile(
@@ -195,11 +204,19 @@ class EpisodeListItem extends StatelessWidget {
           style: TextStyle(color: Colors.white, fontSize: 13),
         ),
         subtitle: Text(
-          "☆ ${episodeInfo.stars}  |  ${episodeInfo.uploadDate.toString().split(' ')[0]}", //년-월-일 까지만 표시
+          "${episodeInfo.uploadDate.toString().split(' ')[0]}", //년-월-일 까지만 표시
           style: TextStyle(color: Colors.white70, fontSize: 12),
         ),
 
         onTap: () {
+          //선호 음악 프롬프트 입력 모달창 출력
+          ShowDialogHelper.showAlertWithTextFieldAndActionAndCancel(
+            onPressed: () {},
+            title: "음악 분위기 입력 ",
+            message: "원하는 음악 분위기를 입력해주세요. \n 빈칸이면 알아서 생성됨",
+            enterMsg: "확인",
+            cancelMsg: "취소",
+          );
           return;
           // 에피소드 상세 페이지로 이동
           //Navigator.pushNamed(context, '/episodeDetail', arguments: episodeInfo);

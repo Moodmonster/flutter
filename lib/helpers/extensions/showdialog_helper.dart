@@ -214,6 +214,7 @@ class ShowDialogHelper {
     String? thumbImgFileName;
     final ImagePicker picker = ImagePicker();
     showDialog(
+      barrierColor: Colors.transparent,
       context: AppRouter.navigatorKey.currentContext!,
       builder: (BuildContext context) {
         return StatefulBuilder(
@@ -361,6 +362,8 @@ class ShowDialogHelper {
                                           selectedThumbImg = File(
                                             pickedFile.path,
                                           );
+
+                                          thumbImgFileName = pickedFile.name;
                                         });
                                       }
                                     }
@@ -488,10 +491,16 @@ class ShowDialogHelper {
                                       _descController.text.isEmpty ||
                                       thumbImgFileName == null) {
                                     //입력 안된 값이 있을 경우
-                                    showSnackBar(
-                                      content: "입력이 안 된 값이 존재합니다",
-                                      backgroundColor: AppColors.secondary,
-                                      textColor: AppColors.black,
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                          "압력 안 된 값이 있습니다",
+                                          style: TextStyle(
+                                            color: AppColors.black,
+                                          ),
+                                        ),
+                                        backgroundColor: AppColors.secondary,
+                                      ),
                                     );
                                   } else {
                                     //ContentDumyData.add(Content(code: DateTime.now().hashCode, title: _titleController.text, desc: _descController.text, author: author, userId: userId, contentType: contentType, clickCount: clickCount, thumbnailUrl: thumbnailUrl))

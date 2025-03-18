@@ -10,7 +10,7 @@ List<Content> ContentDumyData = [
     9.89,
     false,
     false,
-    "../assets/imgs/thumbnail_IMAG21_15cb2611-34c0-4f02-a689-41d0b1016579.jpg",
+    "assets/imgs/thumbnail_IMAG21_15cb2611-34c0-4f02-a689-41d0b1016579.jpg",
   ),
   Content(
     2,
@@ -21,7 +21,7 @@ List<Content> ContentDumyData = [
     9.95,
     false,
     false,
-    "../assets/imgs/thumbnail_IMAG21_99e49512-e05d-48c3-846d-d898f78523df.jpg",
+    "assets/imgs/thumbnail_IMAG21_99e49512-e05d-48c3-846d-d898f78523df.jpg",
   ),
   Content(
     3,
@@ -32,7 +32,7 @@ List<Content> ContentDumyData = [
     9.98,
     true,
     false,
-    "../assets/imgs/thumbnail_IMAG21_7479316a-1fca-40d6-9d8e-455f8b2fb0db.jpg",
+    "assets/imgs/thumbnail_IMAG21_7479316a-1fca-40d6-9d8e-455f8b2fb0db.jpg",
   ),
   Content(
     4,
@@ -43,7 +43,7 @@ List<Content> ContentDumyData = [
     9.61,
     false,
     false,
-    "../assets/imgs/thumbnail_IMAG21_d7732f14-26da-4e35-8762-660cc87b53f1.jpg",
+    "assets/imgs/thumbnail_IMAG21_d7732f14-26da-4e35-8762-660cc87b53f1.jpg",
   ),
   Content(
     5,
@@ -54,7 +54,7 @@ List<Content> ContentDumyData = [
     9.95,
     false,
     false,
-    "../assets/imgs/thumbnail_IMAG21_07118c59-2490-4cc9-b144-11c10f138b30.jpg",
+    "assets/imgs/thumbnail_IMAG21_07118c59-2490-4cc9-b144-11c10f138b30.jpg",
   ),
   Content(
     6,
@@ -65,7 +65,7 @@ List<Content> ContentDumyData = [
     9.98,
     false,
     false,
-    "../assets/imgs/thumbnail_IMAG21_91f8c0be-dcab-47f2-a198-afeb0746e06e.jpg",
+    "assets/imgs/thumbnail_IMAG21_91f8c0be-dcab-47f2-a198-afeb0746e06e.jpg",
   ),
   Content(
     7,
@@ -76,6 +76,6 @@ List<Content> ContentDumyData = [
     9.96,
     false,
     false,
-    "../assets/imgs/thumbnail_IMAG21_8957548a-2eb2-4ddf-a50e-dbc7fddc16a7.jpg",
+    "assets/imgs/thumbnail_IMAG21_8957548a-2eb2-4ddf-a50e-dbc7fddc16a7.jpg",
   ),
 ];

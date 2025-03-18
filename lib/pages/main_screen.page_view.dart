@@ -28,35 +28,37 @@ class _MainScreenState extends State<MoodMonsterMainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: MoodColors.background,
-      body: HomeScreen(),
-      //하단 네비게이션바
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        showUnselectedLabels: true,
-        unselectedItemColor: MoodColors.hintGrey,
+    return SafeArea(
+      child: Scaffold(
         backgroundColor: MoodColors.background,
-        selectedItemColor: MoodColors.mainTextColor,
-
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home_filled),
-            label: 'home',
-            backgroundColor: MoodColors.background,
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.bar_chart_rounded),
-            label: 'ranking',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.storage_rounded),
-            label: 'storage',
-          ),
-          BottomNavigationBarItem(icon: Icon(Icons.person_2), label: 'my'),
-        ],
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
+        body: HomeScreen(),
+        //하단 네비게이션바
+        bottomNavigationBar: BottomNavigationBar(
+          type: BottomNavigationBarType.fixed,
+          showUnselectedLabels: true,
+          unselectedItemColor: MoodColors.hintGrey,
+          backgroundColor: MoodColors.background,
+          selectedItemColor: MoodColors.mainTextColor,
+      
+          items: [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home_filled),
+              label: 'home',
+              backgroundColor: MoodColors.background,
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.bar_chart_rounded),
+              label: 'ranking',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.storage_rounded),
+              label: 'storage',
+            ),
+            BottomNavigationBarItem(icon: Icon(Icons.person_2), label: 'my'),
+          ],
+          currentIndex: _selectedIndex,
+          onTap: _onItemTapped,
+        ),
       ),
     );
   }

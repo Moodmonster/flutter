@@ -14,7 +14,7 @@ class AppBootstrapper {
     setPathUrlStrategy();
     await LocalStorageBase.init();
     await SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitDown,
+      DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown
     ]);
 

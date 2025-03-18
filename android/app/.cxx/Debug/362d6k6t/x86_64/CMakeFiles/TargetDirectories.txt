@@ -1,0 +1,2 @@
+/Users/samsung1/AndroidStudioProjects/moodmonster/android/app/.cxx/Debug/362d6k6t/x86_64/CMakeFiles/edit_cache.dir
+/Users/samsung1/AndroidStudioProjects/moodmonster/android/app/.cxx/Debug/362d6k6t/x86_64/CMakeFiles/rebuild_cache.dir

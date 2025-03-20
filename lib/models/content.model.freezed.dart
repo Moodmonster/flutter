@@ -16,7 +16,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Content {
 
- int get code; String get title; String get desc; String get author; String get userId; ContentType get contentType;//웹툰인지 소설인지
+ int get code; String get title; String get desc; String get author; String get userId; MyContentType get contentType;//웹툰인지 소설인지
  int get clickCount;//클릭수
  String get thumbnailUrl;
 /// Create a copy of Content
@@ -51,7 +51,7 @@ abstract mixin class $ContentCopyWith<$Res>  {
   factory $ContentCopyWith(Content value, $Res Function(Content) _then) = _$ContentCopyWithImpl;
 @useResult
 $Res call({
- int code, String title, String desc, String author, String userId, ContentType contentType, int clickCount, String thumbnailUrl
+ int code, String title, String desc, String author, String userId, MyContentType contentType, int clickCount, String thumbnailUrl
 });
 
 
@@ -76,7 +76,7 @@ as String,desc: null == desc ? _self.desc : desc // ignore: cast_nullable_to_non
 as String,author: null == author ? _self.author : author // ignore: cast_nullable_to_non_nullable
 as String,userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
 as String,contentType: null == contentType ? _self.contentType : contentType // ignore: cast_nullable_to_non_nullable
-as ContentType,clickCount: null == clickCount ? _self.clickCount : clickCount // ignore: cast_nullable_to_non_nullable
+as MyContentType,clickCount: null == clickCount ? _self.clickCount : clickCount // ignore: cast_nullable_to_non_nullable
 as int,thumbnailUrl: null == thumbnailUrl ? _self.thumbnailUrl : thumbnailUrl // ignore: cast_nullable_to_non_nullable
 as String,
   ));
@@ -97,7 +97,7 @@ class _Content implements Content {
 @override final  String desc;
 @override final  String author;
 @override final  String userId;
-@override final  ContentType contentType;
+@override final  MyContentType contentType;
 //웹툰인지 소설인지
 @override final  int clickCount;
 //클릭수
@@ -136,7 +136,7 @@ abstract mixin class _$ContentCopyWith<$Res> implements $ContentCopyWith<$Res> {
   factory _$ContentCopyWith(_Content value, $Res Function(_Content) _then) = __$ContentCopyWithImpl;
 @override @useResult
 $Res call({
- int code, String title, String desc, String author, String userId, ContentType contentType, int clickCount, String thumbnailUrl
+ int code, String title, String desc, String author, String userId, MyContentType contentType, int clickCount, String thumbnailUrl
 });
 
 
@@ -161,7 +161,7 @@ as String,desc: null == desc ? _self.desc : desc // ignore: cast_nullable_to_non
 as String,author: null == author ? _self.author : author // ignore: cast_nullable_to_non_nullable
 as String,userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
 as String,contentType: null == contentType ? _self.contentType : contentType // ignore: cast_nullable_to_non_nullable
-as ContentType,clickCount: null == clickCount ? _self.clickCount : clickCount // ignore: cast_nullable_to_non_nullable
+as MyContentType,clickCount: null == clickCount ? _self.clickCount : clickCount // ignore: cast_nullable_to_non_nullable
 as int,thumbnailUrl: null == thumbnailUrl ? _self.thumbnailUrl : thumbnailUrl // ignore: cast_nullable_to_non_nullable
 as String,
   ));

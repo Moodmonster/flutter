@@ -29,6 +29,8 @@ class AppColors {
 
   static const Color mainTextColor = Color.fromARGB(255, 255, 255, 255);
 
+  static const Color dialogBackground = Color.fromARGB(255, 210, 210, 210);
+
   /// primary
   //static const Color primary = Color(0xFFF7E172);
   static const Color primary = Color.fromARGB(255, 48, 61, 130);

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moodmonster/config/routes/app_router.dart';
 import 'package:moodmonster/dumyData/contentEpisodeDumyData.dart';
 import 'package:moodmonster/helpers/constants/app_colors.dart';
 import 'package:moodmonster/helpers/extensions/showdialog_helper.dart';
@@ -73,6 +74,40 @@ class EpisodeListScreen extends StatelessWidget {
                       ),
                     ),
                   ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    //뒤로가기 버튼
+                    InkWell(
+                      onTap: () {
+                        AppRouter.pop();
+                      },
+                      child: Container(
+                        padding: EdgeInsets.all(10),
+                        child: Icon(
+                          shadows: <Shadow>[
+                            Shadow(color: Colors.black, blurRadius: 10.0),
+                          ],
+                          Icons.arrow_back_ios_new,
+                          color: AppColors.white,
+                        ),
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () {},
+                      child: Container(
+                        padding: EdgeInsets.all(10),
+                        child: Icon(
+                          shadows: <Shadow>[
+                            Shadow(color: Colors.black, blurRadius: 10.0),
+                          ],
+                          Icons.more_vert_rounded,
+                          color: AppColors.white,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),

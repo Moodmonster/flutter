@@ -8,8 +8,8 @@ part of 'content_episode.model.dart';
 
 _ContentEpisode _$ContentEpisodeFromJson(Map<String, dynamic> json) =>
     _ContentEpisode(
-      code: (json['code'] as num).toInt(),
-      contentCode: (json['contentCode'] as num).toInt(),
+      code: json['code'] as String,
+      contentCode: json['contentCode'] as String,
       epTitle: json['epTitle'] as String,
       uploadDate: DateTime.parse(json['uploadDate'] as String),
       thumbnailUrl: json['thumbnailUrl'] as String,

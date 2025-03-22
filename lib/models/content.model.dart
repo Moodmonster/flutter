@@ -9,7 +9,7 @@ enum MyContentType { Webtoon, Novel }
 @freezed
 abstract class Content with _$Content {
   factory Content({
-    required int code,
+    required String code,
     required String title,
     required String desc,
     required String author,
@@ -24,7 +24,7 @@ abstract class Content with _$Content {
 }
 
 // class Content {
-//   final int code;
+//   final String code;
 //   final String title;
 //   final String desc;
 //   final String author;

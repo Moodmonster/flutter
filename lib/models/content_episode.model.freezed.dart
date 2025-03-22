@@ -16,7 +16,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$ContentEpisode {
 
- int get code; int get contentCode;//해당 에피소드가 속해있는 웹툰의 고유 코드
+ String get code; String get contentCode;//해당 에피소드가 속해있는 웹툰의 고유 코드
  String get epTitle; DateTime get uploadDate;//업로드된 날짜
  String get thumbnailUrl;
 /// Create a copy of ContentEpisode
@@ -51,7 +51,7 @@ abstract mixin class $ContentEpisodeCopyWith<$Res>  {
   factory $ContentEpisodeCopyWith(ContentEpisode value, $Res Function(ContentEpisode) _then) = _$ContentEpisodeCopyWithImpl;
 @useResult
 $Res call({
- int code, int contentCode, String epTitle, DateTime uploadDate, String thumbnailUrl
+ String code, String contentCode, String epTitle, DateTime uploadDate, String thumbnailUrl
 });
 
 
@@ -71,8 +71,8 @@ class _$ContentEpisodeCopyWithImpl<$Res>
 @pragma('vm:prefer-inline') @override $Res call({Object? code = null,Object? contentCode = null,Object? epTitle = null,Object? uploadDate = null,Object? thumbnailUrl = null,}) {
   return _then(_self.copyWith(
 code: null == code ? _self.code : code // ignore: cast_nullable_to_non_nullable
-as int,contentCode: null == contentCode ? _self.contentCode : contentCode // ignore: cast_nullable_to_non_nullable
-as int,epTitle: null == epTitle ? _self.epTitle : epTitle // ignore: cast_nullable_to_non_nullable
+as String,contentCode: null == contentCode ? _self.contentCode : contentCode // ignore: cast_nullable_to_non_nullable
+as String,epTitle: null == epTitle ? _self.epTitle : epTitle // ignore: cast_nullable_to_non_nullable
 as String,uploadDate: null == uploadDate ? _self.uploadDate : uploadDate // ignore: cast_nullable_to_non_nullable
 as DateTime,thumbnailUrl: null == thumbnailUrl ? _self.thumbnailUrl : thumbnailUrl // ignore: cast_nullable_to_non_nullable
 as String,
@@ -89,8 +89,8 @@ class _ContentEpisode implements ContentEpisode {
    _ContentEpisode({required this.code, required this.contentCode, required this.epTitle, required this.uploadDate, required this.thumbnailUrl});
   factory _ContentEpisode.fromJson(Map<String, dynamic> json) => _$ContentEpisodeFromJson(json);
 
-@override final  int code;
-@override final  int contentCode;
+@override final  String code;
+@override final  String contentCode;
 //해당 에피소드가 속해있는 웹툰의 고유 코드
 @override final  String epTitle;
 @override final  DateTime uploadDate;
@@ -130,7 +130,7 @@ abstract mixin class _$ContentEpisodeCopyWith<$Res> implements $ContentEpisodeCo
   factory _$ContentEpisodeCopyWith(_ContentEpisode value, $Res Function(_ContentEpisode) _then) = __$ContentEpisodeCopyWithImpl;
 @override @useResult
 $Res call({
- int code, int contentCode, String epTitle, DateTime uploadDate, String thumbnailUrl
+ String code, String contentCode, String epTitle, DateTime uploadDate, String thumbnailUrl
 });
 
 
@@ -150,8 +150,8 @@ class __$ContentEpisodeCopyWithImpl<$Res>
 @override @pragma('vm:prefer-inline') $Res call({Object? code = null,Object? contentCode = null,Object? epTitle = null,Object? uploadDate = null,Object? thumbnailUrl = null,}) {
   return _then(_ContentEpisode(
 code: null == code ? _self.code : code // ignore: cast_nullable_to_non_nullable
-as int,contentCode: null == contentCode ? _self.contentCode : contentCode // ignore: cast_nullable_to_non_nullable
-as int,epTitle: null == epTitle ? _self.epTitle : epTitle // ignore: cast_nullable_to_non_nullable
+as String,contentCode: null == contentCode ? _self.contentCode : contentCode // ignore: cast_nullable_to_non_nullable
+as String,epTitle: null == epTitle ? _self.epTitle : epTitle // ignore: cast_nullable_to_non_nullable
 as String,uploadDate: null == uploadDate ? _self.uploadDate : uploadDate // ignore: cast_nullable_to_non_nullable
 as DateTime,thumbnailUrl: null == thumbnailUrl ? _self.thumbnailUrl : thumbnailUrl // ignore: cast_nullable_to_non_nullable
 as String,

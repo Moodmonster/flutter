@@ -147,10 +147,10 @@ class ShowDialogHelper {
                       hintText: "ex:재즈풍의 피아노",
                       hintStyle: TextStyle(
                         fontSize: 12,
-                        color: AppColors.lightBlack,
+                        color: AppColors.descTextColor,
                       ),
                       filled: true,
-                      fillColor: Colors.grey[200],
+                      fillColor: AppColors.white,
                       border: InputBorder.none,
                       enabledBorder: OutlineInputBorder(
                         borderSide: BorderSide.none,
@@ -217,6 +217,28 @@ class ShowDialogHelper {
         return const CupertinoActivityIndicator(
           color: Colors.white,
           radius: 24,
+        );
+      },
+    );
+  }
+
+  /// 로딩 모달을 띄웁니다.
+  static void showLoadingWithMessage({required String message}) {
+    showCupertinoDialog(
+      context: AppRouter.navigatorKey.currentContext!,
+      barrierDismissible: false, // 바깥 터치로 닫히지 않도록
+      builder: (context) {
+        return CupertinoAlertDialog(
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SizedBox(height: 16),
+              const CupertinoActivityIndicator(radius: 14),
+              const SizedBox(height: 16),
+              Text(message, style: const TextStyle(fontSize: 14)),
+              const SizedBox(height: 8),
+            ],
+          ),
         );
       },
     );

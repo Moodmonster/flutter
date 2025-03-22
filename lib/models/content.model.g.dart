@@ -7,7 +7,7 @@ part of 'content.model.dart';
 // **************************************************************************
 
 _Content _$ContentFromJson(Map<String, dynamic> json) => _Content(
-  code: (json['code'] as num).toInt(),
+  code: json['code'] as String,
   title: json['title'] as String,
   desc: json['desc'] as String,
   author: json['author'] as String,

@@ -22,20 +22,25 @@ class _NovelParagraphsShowScreenState
   ContentEpisode? episodeInfo;
   bool _initialized = false;
 
-  //처음 1회 에피소드내 단락 데이터 가져오기
+  //최초로 해당 에피소드의 단락 데이터들 가져오기
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (_initialized) return;
 
+    //현재 routeing방식은 path파라미터 방식말고 arguments에 보내는 방식 -> 나중에 수정해함
     final args =
         ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
-
+    // arguments에서 episode에 해당하는 데이터 뽑고
     episodeInfo = args?['episode'] as ContentEpisode?;
+    // arguments에서 prompt(원하는 음악 분위기)에 해당하는 데이터 뽑는다
     final prompt = args?['prompt'] as String? ?? '';
+
     print("episodeInfo${episodeInfo}");
     print("prompt:${prompt}");
+
     if (episodeInfo != null) {
+      // 해당 에피소드의 단락 데이터 백엔드로부터 가져오기 실행
       ref
           .read(NovelParagraphProvider.notifier)
           .loadParagraphs(code: episodeInfo!.code, prompt: prompt);
@@ -46,27 +51,33 @@ class _NovelParagraphsShowScreenState
 
   @override
   Widget build(BuildContext context) {
-    final paragraphsAsync = ref.watch(NovelParagraphProvider);
+    final novelParagraphsAsync = ref.watch(NovelParagraphProvider);
     //episodeInfo가 없으면 데이터 없다는 내용의 화면 띄운다
     if (episodeInfo == null) {
       return DataNullScreen();
     }
 
     return Scaffold(
-      body: Column(
-        children: [
-          _MyAppBar(episodeInfo: episodeInfo!),
-          Expanded(
-            child: paragraphsAsync.when(
-              data: (paragraphs) {
-                AudioPlayer _audioPlayer = AudioPlayer();
-                return _buildParagraphsScreenUI(paragraphs, _audioPlayer);
-              },
-              loading: () => Center(child: CircularProgressIndicator()),
-              error: (e, _) => Center(child: Text('오류 발생: $e')),
+      body: SafeArea(
+        child: Column(
+          children: [
+            _MyAppBar(episodeInfo: episodeInfo!),
+            Expanded(
+              //소설 단락들 담는 프로바이더의 상태에 따라 다른 내용 보이도록
+              child: novelParagraphsAsync.when(
+                //데이터 정상적으로 있는 상태라면
+                data: (paragraphs) {
+                  AudioPlayer _audioPlayer = AudioPlayer();
+                  return _buildParagraphsScreenUI(paragraphs, _audioPlayer);
+                },
+                // 로딩중이라면
+                loading: () => Center(child: CircularProgressIndicator()),
+                // 에러난 상태면
+                error: (e, _) => Center(child: Text('오류 발생: $e')),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -96,6 +107,7 @@ class __MyAppBarState extends State<_MyAppBar> {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
+          //뒤로 가기 버튼
           IconButton(
             onPressed: () {
               AppRouter.pop();
@@ -112,6 +124,7 @@ class __MyAppBarState extends State<_MyAppBar> {
               ),
             ),
           ),
+          //우측의 음소거, tts기능 버튼
           Row(
             children: [
               //배경음악 음소거 끄고 키는 버튼
@@ -119,8 +132,9 @@ class __MyAppBarState extends State<_MyAppBar> {
                 onPressed: () async {
                   if (_isMuted) {
                     //음소거 상태였는데  버튼 누른거면=> 소리키기
-                    //재생중이던 플레이어가 있다면 이전에 재생중이던 음량으로 소리킨다
+                    //재생중이던 플레이어가 있다면 소리 다시 켜야됨
                     if (_ParagraphItemState._currentlyPlaying != null) {
+                      //이전에 재생중이던 음량으로 소리킨다
                       await _ParagraphItemState._currentlyPlaying!.setVolume(
                         _originalVolume,
                       );
@@ -133,7 +147,7 @@ class __MyAppBarState extends State<_MyAppBar> {
                       _originalVolume =
                           _ParagraphItemState._currentlyPlaying?.volume ?? 1;
                       print("_originalVolume: ${_originalVolume}");
-                      //음소거
+                      //음소거 실행
                       await _ParagraphItemState._currentlyPlaying!.setVolume(0);
                     }
                   }
@@ -146,7 +160,7 @@ class __MyAppBarState extends State<_MyAppBar> {
                 icon: _isMuted ? Icon(Icons.music_note) : Icon(Icons.music_off),
               ),
               SizedBox(width: 7.w),
-              //TTS로 읽어주기 기능
+              //TTS로 읽어주기 기능 버튼
               IconButton(onPressed: () {}, icon: Icon(Icons.record_voice_over)),
             ],
           ),
@@ -156,22 +170,21 @@ class __MyAppBarState extends State<_MyAppBar> {
   }
 }
 
-//단락들 쭉 나오게
+//단락들 쭉 나오게 하는 listView
 Widget _buildParagraphsScreenUI(
   List<NovelParagraph> paragraphs,
   AudioPlayer _audioPlayer,
 ) {
   return ListView.builder(
-    padding: const EdgeInsets.all(20),
+    padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
     itemCount: paragraphs.length,
     itemBuilder: (context, index) {
-      final item = paragraphs[index];
       return ParagraphItem(paragraph: paragraphs[index]);
     },
   );
 }
 
-//단락 하나하나 우젯
+//단락 하나하나에 해당하는 위젯
 class ParagraphItem extends StatefulWidget {
   final NovelParagraph paragraph;
 
@@ -184,8 +197,9 @@ class ParagraphItem extends StatefulWidget {
 class _ParagraphItemState extends State<ParagraphItem> {
   // 내 플레이어
   late final AudioPlayer _player;
+
   // static변수로 현재 재생중인 플레이어 정보 담는다
-  // 모든 ParagraphItem에서 동일한 _currentlyPlaying변수에 접근 가능(static이기 때문)
+  // 모든 ParagraphItem 인스턴스에서 동일한 _currentlyPlaying변수에 접근 가능(static이기 때문)
   static AudioPlayer? _currentlyPlaying;
 
   @override
@@ -202,6 +216,7 @@ class _ParagraphItemState extends State<ParagraphItem> {
     super.dispose();
   }
 
+  //노래 재생시키는 함수
   Future<void> _playAudio() async {
     // 기존에 재생 중인 플레이어가 있고 재생중인게 내 플레이어가 아니라면 멈춤
     if (_currentlyPlaying != null && _currentlyPlaying != _player) {
@@ -209,19 +224,22 @@ class _ParagraphItemState extends State<ParagraphItem> {
     }
 
     try {
+      //url과 연결된 음악 재생 시도
       await _player.setUrl(widget.paragraph.music_url);
     } catch (e) {
+      //url음악은 실패했다면
       print("Azure URL로 노래 재생 실패: $e");
       try {
         //default mp3재생되도록
         await _player.setAsset('assets/audio/default.mp3');
       } catch (err) {
         print("기본 오디오도 실패: $err");
+        //아무노래도 재생하지 않는다
         return;
       }
     }
 
-    //현재 재생중인 플레이어를 내 플레이로 설정
+    //현재 재생중인 플레이어 정보(static)를 내 플레이어로 설정
     _currentlyPlaying = _player;
     _player.play();
   }
@@ -234,8 +252,11 @@ class _ParagraphItemState extends State<ParagraphItem> {
         Row(
           children: [
             //누르면 노래 재생 버튼
-            IconButton(icon: Icon(Icons.music_note), onPressed: _playAudio),
-            //단락 내용 쫙 보여준다
+            IconButton(
+              icon: Icon(Icons.play_circle_fill_outlined),
+              onPressed: _playAudio,
+            ),
+            //단락 내용(text) 보여준다
             Expanded(
               child: Text(
                 widget.paragraph.music_url,
@@ -244,8 +265,9 @@ class _ParagraphItemState extends State<ParagraphItem> {
             ),
           ],
         ),
-        const SizedBox(height: 8),
+        SizedBox(height: 8.h),
         Text(widget.paragraph.text),
+        //구분선
         const Divider(),
       ],
     );

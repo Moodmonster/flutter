@@ -94,7 +94,7 @@ class _MyAppBar extends StatefulWidget {
 
 class __MyAppBarState extends State<_MyAppBar> {
   //현재 음소거 여부 : 처음에는 false
-  bool _isMuted = false;
+  static bool _isMuted = false;
   //기존 음량크기 정보(일단 1로 설정. 음소거 누르면 업데이트되어 재생중이던 음량 정보로 업데이트됨)
   double _originalVolume = 1;
   @override
@@ -241,6 +241,11 @@ class _ParagraphItemState extends State<ParagraphItem> {
 
     //현재 재생중인 플레이어 정보(static)를 내 플레이어로 설정
     _currentlyPlaying = _player;
+    //만약 현재 음소거 상태라면 소리 0으로 세팅
+    if (__MyAppBarState._isMuted) {
+      _player.setVolume(0);
+    }
+    //음악 재생
     _player.play();
   }
 
@@ -256,7 +261,7 @@ class _ParagraphItemState extends State<ParagraphItem> {
               icon: Icon(Icons.play_circle_fill_outlined),
               onPressed: _playAudio,
             ),
-            //단락 내용(text) 보여준다
+            //음악 파일 이름
             Expanded(
               child: Text(
                 widget.paragraph.music_url,
@@ -266,7 +271,11 @@ class _ParagraphItemState extends State<ParagraphItem> {
           ],
         ),
         SizedBox(height: 8.h),
-        Text(widget.paragraph.text),
+        //단락 내용(txt)출력
+        Text(
+          widget.paragraph.text,
+          style: TextStyle(fontSize: 22, height: 1.8),
+        ),
         //구분선
         const Divider(),
       ],

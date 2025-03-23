@@ -21,30 +21,13 @@ class WebtoonService {
     }
   }
 
-  //웹툰 추가
-  // static Future<void> createWebtoon(
-  //   File thumbnailFile,
-  //   Content newContent,
-  // ) async {
-  //   final response = await ApiService.postRequestWithFile(
-  //     "/contents/Webtoon/create",
-  //     thumbnailFile,
-  //     newContent.toJson(),
-  //   );
-  //   if (response.statusCode == 200) {
-  //     return;
-  //   } else {
-  //     throw Exception("웹툰 create failed");
-  //   }
-  // }
-
   // 모바일에서 웹툰 추가(이미지 처리방식이 달리 모바일, 웹 분리)
   static Future<void> createWebtoonInMobile({
     required String title,
     required String desc,
     required String author,
     required String userId,
-    required File imageFile,
+    required File fileData,
   }) async {
     final response = await ApiService.postRequestWithFile(
       endpoint: "/contents/webtoon/create",
@@ -54,7 +37,7 @@ class WebtoonService {
         'author': author,
         'userId': userId,
       },
-      imageFile: imageFile,
+      fileData: fileData,
     );
     if (response.statusCode == 200) {
       return;
@@ -69,8 +52,8 @@ class WebtoonService {
     required String desc,
     required String author,
     required String userId,
-    required Uint8List imageFileInWeb,
-    required String imageFileNameInWeb,
+    required Uint8List fileDataInWeb,
+    required String fileDataNameInWeb,
   }) async {
     final response = await ApiService.postRequestWithFile(
       endpoint: "/contents/webtoon/create",
@@ -80,8 +63,8 @@ class WebtoonService {
         'author': author,
         'userId': userId,
       },
-      imageFileInWeb: imageFileInWeb,
-      imageFileNameInWeb: imageFileNameInWeb,
+      fileDataInWeb: fileDataInWeb,
+      fileDataNameInWeb: fileDataNameInWeb,
     );
     if (response.statusCode == 200) {
       return;

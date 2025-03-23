@@ -140,7 +140,6 @@ class _HomeScreenState extends State<HomeScreen>
             return FloatingActionButton(
               onPressed: () {
                 showAlertForAdd(
-                  onPressed: () {},
                   DialogTtitle: "콘텐츠 추가",
                   enterMsg: "확인",
                   cancelMsg: "취소",
@@ -162,7 +161,6 @@ class _HomeScreenState extends State<HomeScreen>
 ///콘텐츠, 목차 add할 때 사용할 모달창
 ///사용자로부터 값 입력 받을 수 있고 확인을 누르면 Action이 수행, 사용자가 임의로 취소 가능한 알림창
 void showAlertForAdd({
-  required VoidCallback onPressed,
   required String DialogTtitle,
   required String enterMsg,
   required String cancelMsg,
@@ -607,7 +605,7 @@ void showAlertForAdd({
                                         content: "추가 완료!",
                                       );
                                     } catch (e) {
-                                      AppRouter.pop();
+                                      ShowDialogHelper.closeLoading();
                                       ShowDialogHelper.showSnackBar(
                                         content: "에러 발생: $e",
                                       );
@@ -633,7 +631,7 @@ void showAlertForAdd({
                                               desc: _descController.text,
                                               author: _authorController.text,
                                               userId: PrefsKeys.userId,
-                                              imageFile: selectedThumbImg!,
+                                              fileData: selectedThumbImg!,
                                             );
                                       } //  이미지가 웹에서 업로드한 데이터이고 파일명도 제대로 인식했으면
                                       else if (selectedThumbImgWeb != null &&
@@ -643,8 +641,8 @@ void showAlertForAdd({
                                           desc: _descController.text,
                                           author: _authorController.text,
                                           userId: PrefsKeys.userId,
-                                          imageFileInWeb: selectedThumbImgWeb!,
-                                          imageFileNameInWeb: thumbImgFileName!,
+                                          fileDataInWeb: selectedThumbImgWeb!,
+                                          fileDataNameInWeb: thumbImgFileName!,
                                         );
                                       } else {
                                         ShowDialogHelper.showSnackBar(
@@ -659,7 +657,7 @@ void showAlertForAdd({
                                       );
                                     } catch (err) {
                                       //오류 발생시 스낵바 띄움
-                                      AppRouter.pop();
+                                      ShowDialogHelper.closeLoading();
                                       ShowDialogHelper.showSnackBar(
                                         content: "${err}",
                                       );

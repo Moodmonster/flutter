@@ -33,7 +33,7 @@ class WebtoonNotifier extends StateNotifier<AsyncValue<List<Content>>> {
     required String desc,
     required String author,
     required String userId,
-    required File imageFile,
+    required File fileData,
   }) async {
     try {
       // 기존 상태 로딩으로 변경
@@ -45,7 +45,7 @@ class WebtoonNotifier extends StateNotifier<AsyncValue<List<Content>>> {
         desc: desc,
         title: title,
         userId: userId,
-        imageFile: imageFile,
+        fileData: fileData,
       );
 
       // 웹툰 목록 다시 불러오기
@@ -61,8 +61,8 @@ class WebtoonNotifier extends StateNotifier<AsyncValue<List<Content>>> {
     required String desc,
     required String author,
     required String userId,
-    required Uint8List imageFileInWeb,
-    required String imageFileNameInWeb,
+    required Uint8List fileDataInWeb,
+    required String fileDataNameInWeb,
   }) async {
     try {
       // 기존 상태 로딩으로 변경
@@ -74,8 +74,8 @@ class WebtoonNotifier extends StateNotifier<AsyncValue<List<Content>>> {
         desc: desc,
         title: title,
         userId: userId,
-        imageFileInWeb: imageFileInWeb,
-        imageFileNameInWeb: imageFileNameInWeb,
+        fileDataInWeb: fileDataInWeb,
+        fileDataNameInWeb: fileDataNameInWeb,
       );
 
       // 웹툰 목록 다시 불러오기

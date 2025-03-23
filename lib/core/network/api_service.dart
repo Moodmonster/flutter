@@ -35,9 +35,9 @@ class ApiService {
 
   static Future<http.StreamedResponse> postRequestWithFile({
     required String endpoint,
-    File? imageFile, // 업로드할 파일(앱용)
-    Uint8List? imageFileInWeb, //업로드 할 파일(웹용)
-    String? imageFileNameInWeb, //업로드 할 파일의 파일명(웹용)
+    File? fileData, // 업로드할 파일(앱용)
+    Uint8List? fileDataInWeb, //업로드 할 파일(웹용)
+    String? fileDataNameInWeb, //업로드 할 파일의 파일명(웹용)
     required Map<String, dynamic> fields, // 파일 데이터 외 다른 데이터들(code, title등)
   }) async {
     final url = Uri.parse('$baseUrl$endpoint');
@@ -50,24 +50,28 @@ class ApiService {
     //파일 데이터 외 다른 데이터(fields) 추가
     request.fields.addAll(stringFields);
 
-    // 이미지 데이터 첨부
-    // 모바일/웹 이미지 중 하나만 처리
-    if (imageFile != null) {
-      //모바일 이미지 데이터 들어왔으면
-      request.files.add(
-        await http.MultipartFile.fromPath('file', imageFile.path),
-      );
-    } else if (imageFileInWeb != null && imageFileNameInWeb != null) {
-      //웹 이미지 데이터 들어왔으면
-      request.files.add(
-        http.MultipartFile.fromBytes(
-          'file',
-          imageFileInWeb,
-          filename: imageFileNameInWeb,
-        ),
-      );
-    } else {
-      throw Exception("이미지 파일이 없습니다.");
+    try {
+      // 이미지 데이터 첨부
+      // 모바일/웹 이미지 중 하나만 처리
+      if (fileData != null) {
+        //모바일 이미지 데이터 들어왔으면
+        request.files.add(
+          await http.MultipartFile.fromPath('file', fileData.path),
+        );
+      } else if (fileDataInWeb != null && fileDataNameInWeb != null) {
+        //웹 이미지 데이터 들어왔으면
+        request.files.add(
+          http.MultipartFile.fromBytes(
+            'file',
+            fileDataInWeb,
+            filename: fileDataNameInWeb,
+          ),
+        );
+      } else {
+        throw Exception("이미지 파일이 없습니다.");
+      }
+    } catch (err) {
+      throw Exception("에피소드 추가 실패: $err");
     }
     print(request.fields);
     print(request.files);

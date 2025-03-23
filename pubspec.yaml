@@ -37,6 +37,7 @@ dependencies:
   flutter_svg: ^2.0.17 #svg 사용하기 위함
   image_picker: ^1.1.2
   file_picker: ^9.2.1
+  just_audio: ^0.9.46
 
 dev_dependencies:
   flutter_test:
@@ -56,6 +57,7 @@ flutter:
     - assets/imgs/
     - assets/svgs/
     - assets/fonts/
+    - assets/audio/
 
   # fonts:
   #   - family: Schyler

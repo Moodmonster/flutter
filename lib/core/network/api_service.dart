@@ -20,6 +20,7 @@ class ApiService {
     String endpoint,
     Map<String, dynamic> body, //요청 body
   ) async {
+    print("body: ${body}");
     final url = Uri.parse('$baseUrl$endpoint');
     final response = await http.post(
       url,

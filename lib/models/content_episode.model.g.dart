@@ -22,7 +22,7 @@ _ContentEpisode _$ContentEpisodeFromJson(Map<String, dynamic> json) {
     thumbnailUrl = json['thumbnailUrl'] as String;
   }
   return _ContentEpisode(
-    code: json['code'] as String,
+    code: json['episodeCode'] as String,
     contentCode: json['contentCode'] as String,
     epTitle: json['epTitle'] as String,
     uploadDate: dateTime,

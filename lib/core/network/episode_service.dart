@@ -18,13 +18,13 @@ class EpisodeService {
             ? "/contents/webtoon/episode/all"
             : "/contents/novel/episode/all";
 
-    //에피소드 콘텐츠면
     final response = await ApiService.postRequest(endPoint, {
       "contentCode": contentCode,
     });
 
     if (response.statusCode == 200) {
       List<dynamic> dataList = jsonDecode(response.body);
+      print(dataList);
       print(
         dataList.map((dataJson) => ContentEpisode.fromJson(dataJson)).toList(),
       );

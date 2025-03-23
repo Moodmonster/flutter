@@ -35,7 +35,7 @@ class ContentScreen extends ConsumerWidget {
 
         return _buildContentScreen(context, contents, mainContent);
       },
-      loading: () => const Center(child: CircularProgressIndicator()),
+      loading: () => Center(child: CircularProgressIndicator()),
       error: (error, _) {
         print("소설 데이터 로드 실패: $error");
         return Center(child: Text('에러 발생: $error'));
@@ -210,8 +210,8 @@ class ContentMainGridList extends StatelessWidget {
       physics: NeverScrollableScrollPhysics(),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 3, // 한 줄에 3개씩 배치
-        crossAxisSpacing: 12, // 가로 간격
-        mainAxisSpacing: 6, // 세로 간격
+        crossAxisSpacing: 15, // 가로 간격
+        mainAxisSpacing: 9, // 세로 간격
         childAspectRatio: 0.6, // 아이템의 가로세로 비율
       ),
       itemBuilder: (context, index) {
@@ -250,7 +250,7 @@ class ContentCard extends ConsumerWidget {
         );
       },
       child: Column(
-        spacing: 4,
+        spacing: 8,
         children: [
           Container(
             decoration: BoxDecoration(
@@ -286,33 +286,37 @@ class ContentCard extends ConsumerWidget {
               ),
             ),
           ),
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // 웹툰 제목
-              Text(
-                content.title,
-                style: const TextStyle(
-                  color: AppColors.mainTextColor,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 12,
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 3),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // 웹툰 제목
+                Text(
+                  content.title,
+                  style: const TextStyle(
+                    color: AppColors.mainTextColor,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 13,
+                    height: 1.0,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
 
-              // 작가명
-              Text(
-                content.author,
-                style: const TextStyle(
-                  color: AppColors.descTextColor,
-                  fontSize: 10,
+                // 작가명
+                Text(
+                  content.author,
+                  style: const TextStyle(
+                    color: AppColors.descTextColor,
+                    fontSize: 10,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
+              ],
+            ),
           ),
         ],
       ),

@@ -2,12 +2,15 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:moodmonster/config/routes/app_router.dart';
+import 'package:moodmonster/config/routes/routes.dart';
 import 'package:moodmonster/core/local/local_storage_keys.dart';
+import 'package:moodmonster/feature/error/data_null_screen.dart';
 import 'package:moodmonster/helpers/constants/app_colors.dart';
 import 'package:moodmonster/helpers/constants/app_typography.dart';
 import 'package:moodmonster/helpers/extensions/showdialog_helper.dart';
@@ -59,28 +62,7 @@ class _EpisodeListScreenState extends ConsumerState<EpisodeListScreen> {
   Widget build(BuildContext context) {
     //컨텐츠 정보를 바탕으로 에피소드 데이터 리스트들 가져온다
     if (contentInfo == null) {
-      return Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.error_outline),
-            Text(
-              "콘텐츠 정보가 없습니다",
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 20,
-                decoration: TextDecoration.none,
-              ),
-            ),
-            TextButton(
-              onPressed: () {
-                AppRouter.pop();
-              },
-              child: Text("뒤로가기"),
-            ),
-          ],
-        ),
-      );
+      return DataNullScreen();
     }
 
     final episodeState = ref.watch(EpisodeProvider);
@@ -473,8 +455,8 @@ class EpisodeListItem extends StatelessWidget {
 
         onTap: () {
           //선호 음악 프롬프트 입력 모달창 출력
-          ShowDialogHelper.showAlertWithTextFieldAndActionAndCancel(
-            onPressed: () {},
+          _showAlertWithTextFieldAndActionAndCancel(
+            episodeInfo: episodeInfo,
             title: "음악 분위기 입력 ",
             message: "원하는 음악 분위기를 입력해주세요. \n 빈칸이면 알아서 생성됨",
             enterMsg: "확인",
@@ -487,6 +469,97 @@ class EpisodeListItem extends StatelessWidget {
       ),
     );
   }
+}
+
+///사용자로부터 값 입력 받을 수 있고 확인을 누르면 Action이 수행, 사용자가 임의로 취소 가능한 알림창
+void _showAlertWithTextFieldAndActionAndCancel({
+  required ContentEpisode episodeInfo,
+  required String title,
+  required String message,
+  required String enterMsg,
+  required String cancelMsg,
+}) {
+  TextEditingController _SongMoodEnterController = TextEditingController();
+  showCupertinoDialog(
+    context: AppRouter.navigatorKey.currentContext!,
+    builder: (context) {
+      return CupertinoAlertDialog(
+        title: Text(title),
+        content: Column(
+          children: [
+            SizedBox(height: 4.h),
+            Text(
+              message,
+              style: TextStyle(fontSize: 12, color: AppColors.lightBlack),
+            ),
+            SizedBox(height: 10.h),
+            Material(
+              borderRadius: BorderRadius.circular(6),
+              child: SizedBox(
+                width: 300.w,
+                child: TextField(
+                  style: TextStyle(fontSize: 14),
+                  controller: _SongMoodEnterController,
+                  cursorHeight: 14,
+                  textAlignVertical: TextAlignVertical.center,
+                  decoration: InputDecoration(
+                    hintText: "ex:재즈풍의 피아노",
+                    hintStyle: TextStyle(
+                      fontSize: 12,
+                      color: AppColors.descTextColor,
+                    ),
+                    filled: true,
+                    fillColor: AppColors.white,
+                    border: InputBorder.none,
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide.none,
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    isDense: true,
+                    contentPadding: EdgeInsets.symmetric(
+                      vertical: 10,
+                      horizontal: 10,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          CupertinoDialogAction(
+            isDefaultAction: true,
+            onPressed: () async {
+              //모달창 닫기
+              AppRouter.pop();
+              //소설 내용 보는 화면으로 이동
+              AppRouter.pushNamed(
+                Routes.novelParagraphsShowScreen,
+                args: {
+                  'episode': episodeInfo,
+                  'prompt': _SongMoodEnterController.text,
+                },
+              );
+            },
+            child: Text(
+              enterMsg,
+              style: const TextStyle(color: AppColors.primary),
+            ),
+          ),
+          CupertinoDialogAction(
+            isDefaultAction: true,
+            onPressed: () {
+              AppRouter.pop();
+            },
+            child: Text(
+              cancelMsg,
+              style: const TextStyle(color: AppColors.lightBlack),
+            ),
+          ),
+        ],
+      );
+    },
+  );
 }
 
 ///에피소드 add할 때 사용할 모달창

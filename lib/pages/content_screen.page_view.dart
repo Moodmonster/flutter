@@ -270,7 +270,7 @@ class ContentCard extends ConsumerWidget {
               Image.network(
                 content.thumbnailUrl,
                 width: double.infinity,
-                height: 170.h,
+                height: 150.h,
                 fit: BoxFit.cover,
                 alignment: Alignment.center,
                 //오류 발생 시 기본 이미지 보이도록
@@ -310,7 +310,7 @@ class ContentCard extends ConsumerWidget {
                   content.author,
                   style: const TextStyle(
                     color: AppColors.descTextColor,
-                    fontSize: 10,
+                    fontSize: 11,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,

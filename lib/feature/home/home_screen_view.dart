@@ -178,340 +178,103 @@ void showAlertForAdd({
   //사용자가 저장한 이미지의 파일명
   String? thumbImgFileName;
   final ImagePicker picker = ImagePicker();
+
+  //snack바를 다이얼로그 창 위에 띄우기 위해
+  final _scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
   showDialog(
-    barrierColor: Colors.transparent,
+    //barrierColor: Colors.transparent,
     context: AppRouter.navigatorKey.currentContext!,
     builder: (BuildContext context) {
       return StatefulBuilder(
         builder: (context, setState) {
-          return AlertDialog(
-            title: Text(
-              DialogTtitle,
-              style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
-            ),
-            backgroundColor: AppColors.dialogBackground,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15.0),
-            ),
-            contentPadding: const EdgeInsets.all(20.0),
-            content: ConstrainedBox(
-              constraints: BoxConstraints(
-                maxHeight:
-                    MediaQuery.of(context).size.height * 0.7, // 화면 높이의 70%로 제한
-              ),
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 6.w),
-                width: 320.w,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  spacing: 10,
-                  children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+          return ScaffoldMessenger(
+            key: _scaffoldMessengerKey,
+            child: Scaffold(
+              backgroundColor: Colors.transparent,
+              body: AlertDialog(
+                title: Text(
+                  DialogTtitle,
+                  style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
+                ),
+                backgroundColor: AppColors.dialogBackground,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15.0),
+                ),
+                contentPadding: const EdgeInsets.all(20.0),
+                content: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxHeight:
+                        MediaQuery.of(context).size.height *
+                        0.7, // 화면 높이의 70%로 제한
+                  ),
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 6.w),
+                    width: 320.w,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      spacing: 10,
                       children: [
-                        SizedBox(
-                          width: 40.w,
-                          child: Text("제목", softWrap: true),
-                        ),
-                        SizedBox(width: 20.w),
-                        Expanded(
-                          //width: 170.w,
-                          child: TextField(
-                            style: TextStyle(fontSize: 14),
-                            controller: _titleController,
-                            cursorHeight: 16,
-                            textAlignVertical: TextAlignVertical.center,
-                            decoration: InputDecoration(
-                              hoverColor: Colors.transparent,
-                              filled: true,
-                              fillColor: Colors.grey[200],
-                              border: InputBorder.none,
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide.none,
-                                borderRadius: BorderRadius.circular(6),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide.none,
-                                borderRadius: BorderRadius.circular(6),
-                              ),
-                              isDense: true,
-                              contentPadding: EdgeInsets.symmetric(
-                                vertical: 10,
-                                horizontal: 10,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(
-                          width: 40.w,
-                          child: Text("설명", softWrap: true),
-                        ),
-                        SizedBox(width: 20.w),
-                        Expanded(
-                          child: SizedBox(
-                            height: 100.h,
-                            //width: 170.w,
-                            child: TextField(
-                              style: TextStyle(fontSize: 14),
-                              maxLines: null,
-                              expands: true,
-                              textAlignVertical: TextAlignVertical.top,
-                              controller: _descController,
-                              cursorHeight: 16,
-                              decoration: InputDecoration(
-                                hoverColor: Colors.transparent,
-                                filled: true,
-                                fillColor: Colors.grey[200],
-                                border: InputBorder.none,
-                                enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide.none,
-                                  borderRadius: BorderRadius.circular(6),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide.none,
-                                  borderRadius: BorderRadius.circular(6),
-                                ),
-                                isDense: true,
-                                contentPadding: EdgeInsets.symmetric(
-                                  vertical: 10,
-                                  horizontal: 10,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(
-                          width: 40.w,
-                          child: Text("작가명", softWrap: true),
-                        ),
-                        SizedBox(width: 20.w),
-                        Expanded(
-                          //width: 170.w,
-                          child: TextField(
-                            style: TextStyle(fontSize: 14),
-                            controller: _authorController,
-                            cursorHeight: 16,
-                            textAlignVertical: TextAlignVertical.center,
-                            decoration: InputDecoration(
-                              hoverColor: Colors.transparent,
-                              filled: true,
-                              fillColor: Colors.grey[200],
-                              border: InputBorder.none,
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide.none,
-                                borderRadius: BorderRadius.circular(6),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide.none,
-                                borderRadius: BorderRadius.circular(6),
-                              ),
-                              isDense: true,
-                              contentPadding: EdgeInsets.symmetric(
-                                vertical: 10,
-                                horizontal: 10,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    //소설에서 +버튼 눌렀으면 파일 업로드 말고 AI자동생성 프롬프트 입력란
-                    selectedTabContentType == MyContentType.Webtoon
-                        ? Row(
+                        Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             SizedBox(
                               width: 40.w,
-                              child: Text("썸네일 이미지", softWrap: true),
+                              child: Text("제목", softWrap: true),
                             ),
                             SizedBox(width: 20.w),
                             Expanded(
                               //width: 170.w,
-                              child: Column(
-                                children: [
-                                  ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                      shape: RoundedRectangleBorder(
-                                        //모서리를 둥글게
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                      backgroundColor: AppColors.primary,
-
-                                      alignment: Alignment.centerLeft,
-                                      textStyle: const TextStyle(fontSize: 12),
-                                    ),
-                                    onPressed: () async {
-                                      final XFile? pickedFile = await picker
-                                          .pickImage(
-                                            source: ImageSource.gallery,
-                                          );
-                                      if (pickedFile != null) {
-                                        if (kIsWeb) {
-                                          //웹에서 올리는 거면
-                                          final bytes =
-                                              await pickedFile.readAsBytes();
-                                          setState(() {
-                                            selectedThumbImgWeb = bytes;
-                                            thumbImgFileName = pickedFile.name;
-                                          });
-                                        } else {
-                                          // 모바일, 데스크탑 용 처리
-                                          setState(() {
-                                            selectedThumbImg = File(
-                                              pickedFile.path,
-                                            );
-
-                                            thumbImgFileName = pickedFile.name;
-                                          });
-                                        }
-                                      }
-                                    },
-                                    child: Align(
-                                      alignment: Alignment.center,
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Icon(
-                                            Icons.upload_file,
-                                            color: AppColors.white,
-                                          ),
-                                          Text(
-                                            "이미지 업로드",
-                                            style: TextStyle(
-                                              color: AppColors.white,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
+                              child: TextField(
+                                style: TextStyle(fontSize: 14),
+                                controller: _titleController,
+                                cursorHeight: 16,
+                                textAlignVertical: TextAlignVertical.center,
+                                decoration: InputDecoration(
+                                  hoverColor: Colors.transparent,
+                                  filled: true,
+                                  fillColor: AppColors.dialogTextField,
+                                  border: InputBorder.none,
+                                  enabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide.none,
+                                    borderRadius: BorderRadius.circular(6),
                                   ),
-                                  if (selectedThumbImg != null ||
-                                      selectedThumbImgWeb != null)
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 8.0,
-                                        vertical: 8,
-                                      ),
-                                      child: Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Container(
-                                            height: 60.h,
-                                            width: 60.w,
-
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                              border: Border.all(
-                                                color: Colors.grey,
-                                              ),
-                                            ),
-                                            child:
-                                                selectedThumbImg != null
-                                                    ? ClipRRect(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                            10,
-                                                          ),
-                                                      child: Image.file(
-                                                        selectedThumbImg!,
-                                                        fit: BoxFit.cover,
-                                                      ),
-                                                    )
-                                                    : ClipRRect(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                            10,
-                                                          ),
-                                                      child: Image.memory(
-                                                        selectedThumbImgWeb!,
-                                                        fit: BoxFit.cover,
-                                                      ),
-                                                    ),
-                                          ),
-                                          SizedBox(width: 5.w),
-                                          Flexible(
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  "파일명",
-                                                  style: TextStyle(
-                                                    fontSize: 10,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                                Text(
-                                                  thumbImgFileName ?? "",
-                                                  //softWrap: true,
-                                                  style: TextStyle(
-                                                    fontSize: 10,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                ],
+                                  focusedBorder: OutlineInputBorder(
+                                    borderSide: BorderSide.none,
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  isDense: true,
+                                  contentPadding: EdgeInsets.symmetric(
+                                    vertical: 10,
+                                    horizontal: 10,
+                                  ),
+                                ),
                               ),
                             ),
                           ],
-                        )
-                        : Container(
-                          //썸네일 AI자동 생성 입력시 프롬프트 창
-                          margin: EdgeInsets.only(top: 6),
-                          padding: EdgeInsets.all(8),
-
-                          decoration: BoxDecoration(
-                            color: AppColors.deActiveGray,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Column(
-                            children: [
-                              Align(
-                                alignment: Alignment.centerLeft,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text("✨ 썸네일 AI 자동 생성"),
-                                    Text(
-                                      "원하는 이미지 분위기를 입력하세요",
-                                      style: TextStyle(
-                                        fontSize: 10,
-                                        color: AppColors.lightBlack,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              SizedBox(height: 5.h),
-                              Container(
-                                height: 50.h,
+                        ),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              width: 40.w,
+                              child: Text("설명", softWrap: true),
+                            ),
+                            SizedBox(width: 20.w),
+                            Expanded(
+                              child: SizedBox(
+                                height: 100.h,
+                                //width: 170.w,
                                 child: TextField(
                                   style: TextStyle(fontSize: 14),
                                   maxLines: null,
                                   expands: true,
                                   textAlignVertical: TextAlignVertical.top,
-                                  controller: _AIPromptController,
+                                  controller: _descController,
                                   cursorHeight: 16,
                                   decoration: InputDecoration(
                                     hoverColor: Colors.transparent,
                                     filled: true,
-                                    fillColor: Colors.grey[200],
+                                    fillColor: AppColors.dialogTextField,
                                     border: InputBorder.none,
                                     enabledBorder: OutlineInputBorder(
                                       borderSide: BorderSide.none,
@@ -529,176 +292,463 @@ void showAlertForAdd({
                                   ),
                                 ),
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-
-                    //구분선
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Container(
-                            height: 0.5,
-                            color: AppColors.darkGrey,
-                          ),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Flexible(
-                          child: Container(
-                            width: double.infinity,
-                            child: TextButton(
-                              style: TextButton.styleFrom(
-                                padding: EdgeInsets.zero,
-                                minimumSize: Size(50, 30),
-                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                overlayColor: Colors.transparent,
-                              ),
-                              onPressed: () async {
-                                //입력 안된 값이 있을 경우
-                                if (_titleController.text.isEmpty ||
-                                    _descController.text.isEmpty ||
-                                    _authorController.text.isEmpty ||
-                                    (selectedTabContentType == //웹툰 추가이면서 이미지 첨부 안했으면
-                                            MyContentType.Webtoon &&
-                                        thumbImgFileName == null)) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                        "압력 안 된 값이 있습니다",
-                                        style: TextStyle(
-                                          color: AppColors.black,
-                                        ),
-                                      ),
-                                      backgroundColor: AppColors.secondary,
-                                    ),
-                                  );
-                                } else {
-                                  //소설 추가하기 이면
-                                  if (selectedTabContentType ==
-                                      MyContentType.Novel) {
-                                    final novelNotifier =
-                                        ProviderScope.containerOf(
-                                          context,
-                                          listen: false,
-                                        ).read(NovelProvider.notifier);
-
-                                    //로딩창 띄우기
-                                    ShowDialogHelper.showLoadingWithMessage(
-                                      message: "콘텐츠를 추가중입니다.",
-                                    );
-
-                                    try {
-                                      await novelNotifier.addNovel(
-                                        title: _titleController.text,
-                                        desc: _descController.text,
-                                        author: _authorController.text,
-                                        userId: PrefsKeys.userId,
-                                        prompt: _AIPromptController.text,
-                                      );
-                                      ShowDialogHelper.closeLoading();
-                                      AppRouter.pop();
-                                      ShowDialogHelper.showSnackBar(
-                                        content: "추가 완료!",
-                                      );
-                                    } catch (e) {
-                                      ShowDialogHelper.closeLoading();
-                                      ShowDialogHelper.showSnackBar(
-                                        content: "에러 발생: $e",
-                                      );
-                                    }
-                                  } else {
-                                    //웹툰 추가하기면
-
-                                    final webtoonNotifier =
-                                        ProviderScope.containerOf(
-                                          context,
-                                          listen: false,
-                                        ).read(WebtoonProvider.notifier);
-                                    //로딩창 띄우기
-                                    ShowDialogHelper.showLoadingWithMessage(
-                                      message: "콘텐츠를 추가중입니다.",
-                                    );
-                                    try {
-                                      if (selectedThumbImg != null) {
-                                        //이미지가 모바일에서 업로드한 데이터면
-                                        await webtoonNotifier
-                                            .addWebtoonInMobile(
-                                              title: _titleController.text,
-                                              desc: _descController.text,
-                                              author: _authorController.text,
-                                              userId: PrefsKeys.userId,
-                                              fileData: selectedThumbImg!,
-                                            );
-                                      } //  이미지가 웹에서 업로드한 데이터이고 파일명도 제대로 인식했으면
-                                      else if (selectedThumbImgWeb != null &&
-                                          thumbImgFileName != null) {
-                                        await webtoonNotifier.addWebtoonInWeb(
-                                          title: _titleController.text,
-                                          desc: _descController.text,
-                                          author: _authorController.text,
-                                          userId: PrefsKeys.userId,
-                                          fileDataInWeb: selectedThumbImgWeb!,
-                                          fileDataNameInWeb: thumbImgFileName!,
-                                        );
-                                      } else {
-                                        ShowDialogHelper.showSnackBar(
-                                          content: "이미지 선택에 문제가 있습니다",
-                                        );
-                                        return;
-                                      }
-                                      ShowDialogHelper.closeLoading();
-                                      AppRouter.pop();
-                                      ShowDialogHelper.showSnackBar(
-                                        content: "추가 완료!",
-                                      );
-                                    } catch (err) {
-                                      //오류 발생시 스낵바 띄움
-                                      ShowDialogHelper.closeLoading();
-                                      ShowDialogHelper.showSnackBar(
-                                        content: "${err}",
-                                      );
-                                    }
-                                  }
-
-                                  //onPressed();
-                                }
-                              },
-                              child: Text(
-                                "확인",
-                                style: AppTypography.mainCaption_1.copyWith(
-                                  color: AppColors.primary,
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              width: 40.w,
+                              child: Text("작가명", softWrap: true),
+                            ),
+                            SizedBox(width: 20.w),
+                            Expanded(
+                              //width: 170.w,
+                              child: TextField(
+                                style: TextStyle(fontSize: 14),
+                                controller: _authorController,
+                                cursorHeight: 16,
+                                textAlignVertical: TextAlignVertical.center,
+                                decoration: InputDecoration(
+                                  hoverColor: Colors.transparent,
+                                  filled: true,
+                                  fillColor: AppColors.dialogTextField,
+                                  border: InputBorder.none,
+                                  enabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide.none,
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderSide: BorderSide.none,
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  isDense: true,
+                                  contentPadding: EdgeInsets.symmetric(
+                                    vertical: 10,
+                                    horizontal: 10,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
+                          ],
                         ),
-                        Flexible(
-                          child: Container(
-                            width: double.infinity,
-                            child: TextButton(
-                              style: TextButton.styleFrom(
-                                padding: EdgeInsets.zero,
-                                minimumSize: Size(50, 30),
-                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                overlayColor: Colors.transparent,
+                        //소설에서 +버튼 눌렀으면 파일 업로드 말고 AI자동생성 프롬프트 입력란
+                        selectedTabContentType == MyContentType.Webtoon
+                            ? Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(
+                                  width: 40.w,
+                                  child: Text("썸네일 이미지", softWrap: true),
+                                ),
+                                SizedBox(width: 20.w),
+                                Expanded(
+                                  //width: 170.w,
+                                  child: Column(
+                                    children: [
+                                      ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          shape: RoundedRectangleBorder(
+                                            //모서리를 둥글게
+                                            borderRadius: BorderRadius.circular(
+                                              8,
+                                            ),
+                                          ),
+                                          backgroundColor: AppColors.primary,
+
+                                          alignment: Alignment.centerLeft,
+                                          textStyle: const TextStyle(
+                                            fontSize: 12,
+                                          ),
+                                        ),
+                                        onPressed: () async {
+                                          final XFile? pickedFile = await picker
+                                              .pickImage(
+                                                source: ImageSource.gallery,
+                                              );
+                                          if (pickedFile != null) {
+                                            if (kIsWeb) {
+                                              //웹에서 올리는 거면
+                                              final bytes =
+                                                  await pickedFile
+                                                      .readAsBytes();
+                                              setState(() {
+                                                selectedThumbImgWeb = bytes;
+                                                thumbImgFileName =
+                                                    pickedFile.name;
+                                              });
+                                            } else {
+                                              // 모바일, 데스크탑 용 처리
+                                              setState(() {
+                                                selectedThumbImg = File(
+                                                  pickedFile.path,
+                                                );
+
+                                                thumbImgFileName =
+                                                    pickedFile.name;
+                                              });
+                                            }
+                                          }
+                                        },
+                                        child: Align(
+                                          alignment: Alignment.center,
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Icon(
+                                                Icons.upload_file,
+                                                color: AppColors.white,
+                                              ),
+                                              Text(
+                                                "이미지 업로드",
+                                                style: TextStyle(
+                                                  color: AppColors.white,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      if (selectedThumbImg != null ||
+                                          selectedThumbImgWeb != null)
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 8.0,
+                                            vertical: 8,
+                                          ),
+                                          child: Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Container(
+                                                height: 60.h,
+                                                width: 60.w,
+
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                  border: Border.all(
+                                                    color: Colors.grey,
+                                                  ),
+                                                ),
+                                                child:
+                                                    selectedThumbImg != null
+                                                        ? ClipRRect(
+                                                          borderRadius:
+                                                              BorderRadius.circular(
+                                                                10,
+                                                              ),
+                                                          child: Image.file(
+                                                            selectedThumbImg!,
+                                                            fit: BoxFit.cover,
+                                                          ),
+                                                        )
+                                                        : ClipRRect(
+                                                          borderRadius:
+                                                              BorderRadius.circular(
+                                                                10,
+                                                              ),
+                                                          child: Image.memory(
+                                                            selectedThumbImgWeb!,
+                                                            fit: BoxFit.cover,
+                                                          ),
+                                                        ),
+                                              ),
+                                              SizedBox(width: 5.w),
+                                              Flexible(
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      "파일명",
+                                                      style: TextStyle(
+                                                        fontSize: 10,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      thumbImgFileName ?? "",
+                                                      //softWrap: true,
+                                                      style: TextStyle(
+                                                        fontSize: 10,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            )
+                            : Container(
+                              //썸네일 AI자동 생성 입력시 프롬프트 창
+                              margin: EdgeInsets.only(top: 6),
+                              padding: EdgeInsets.all(8),
+
+                              decoration: BoxDecoration(
+                                color: const Color.fromARGB(255, 222, 222, 222),
+                                borderRadius: BorderRadius.circular(10),
                               ),
-                              onPressed: () {
-                                AppRouter.pop();
-                              },
-                              child: Text(
-                                "취소",
-                                style: AppTypography.mainCaption_1,
+                              child: Column(
+                                children: [
+                                  Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text("✨ 썸네일 AI 자동 생성"),
+                                        Text(
+                                          "원하는 이미지 분위기를 입력하세요",
+                                          style: TextStyle(
+                                            fontSize: 10,
+                                            color: AppColors.lightBlack,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  SizedBox(height: 5.h),
+                                  Container(
+                                    height: 50.h,
+                                    child: TextField(
+                                      style: TextStyle(fontSize: 14),
+                                      maxLines: null,
+                                      expands: true,
+                                      textAlignVertical: TextAlignVertical.top,
+                                      controller: _AIPromptController,
+                                      cursorHeight: 16,
+                                      decoration: InputDecoration(
+                                        hoverColor: Colors.transparent,
+                                        filled: true,
+                                        fillColor: AppColors.dialogTextField,
+                                        border: InputBorder.none,
+                                        enabledBorder: OutlineInputBorder(
+                                          borderSide: BorderSide.none,
+                                          borderRadius: BorderRadius.circular(
+                                            6,
+                                          ),
+                                        ),
+                                        focusedBorder: OutlineInputBorder(
+                                          borderSide: BorderSide.none,
+                                          borderRadius: BorderRadius.circular(
+                                            6,
+                                          ),
+                                        ),
+                                        isDense: true,
+                                        contentPadding: EdgeInsets.symmetric(
+                                          vertical: 10,
+                                          horizontal: 10,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                          ),
+
+                        //구분선
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Container(
+                                height: 0.5,
+                                color: AppColors.darkGrey,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Flexible(
+                              child: Container(
+                                width: double.infinity,
+                                child: TextButton(
+                                  style: TextButton.styleFrom(
+                                    padding: EdgeInsets.zero,
+                                    minimumSize: Size(50, 30),
+                                    tapTargetSize:
+                                        MaterialTapTargetSize.shrinkWrap,
+                                    overlayColor: Colors.transparent,
+                                  ),
+                                  onPressed: () async {
+                                    //입력 안된 값이 있을 경우
+                                    if (_titleController.text.isEmpty ||
+                                        _descController.text.isEmpty ||
+                                        _authorController.text.isEmpty ||
+                                        (selectedTabContentType == //웹툰 추가이면서 이미지 첨부 안했으면
+                                                MyContentType.Webtoon &&
+                                            thumbImgFileName == null)) {
+                                      _scaffoldMessengerKey.currentState
+                                          ?.showSnackBar(
+                                            SnackBar(
+                                              content: Text(
+                                                "입력 안 된 값이 있습니다",
+                                                style: TextStyle(
+                                                  color:
+                                                      AppColors.mainTextColor,
+                                                ),
+                                              ),
+                                              backgroundColor:
+                                                  AppColors.secondary,
+                                            ),
+                                          );
+                                    } else {
+                                      //소설 추가하기 이면
+                                      if (selectedTabContentType ==
+                                          MyContentType.Novel) {
+                                        final novelNotifier =
+                                            ProviderScope.containerOf(
+                                              context,
+                                              listen: false,
+                                            ).read(NovelProvider.notifier);
+
+                                        //로딩창 띄우기
+                                        ShowDialogHelper.showLoadingWithMessage(
+                                          message: "콘텐츠를 추가중입니다.",
+                                        );
+
+                                        try {
+                                          await novelNotifier.addNovel(
+                                            title: _titleController.text,
+                                            desc: _descController.text,
+                                            author: _authorController.text,
+                                            userId: PrefsKeys.userId,
+                                            prompt: _AIPromptController.text,
+                                          );
+                                          ShowDialogHelper.closeLoading();
+                                          AppRouter.pop();
+                                          ShowDialogHelper.showSnackBar(
+                                            content: "추가 완료!",
+                                            backgroundColor: AppColors.primary,
+                                          );
+                                        } catch (err) {
+                                          ShowDialogHelper.closeLoading();
+                                          print(err);
+                                          _scaffoldMessengerKey.currentState
+                                              ?.showSnackBar(
+                                                SnackBar(
+                                                  content: Text("에러 발생"),
+                                                ),
+                                              );
+                                        }
+                                      } else {
+                                        //웹툰 추가하기면
+
+                                        final webtoonNotifier =
+                                            ProviderScope.containerOf(
+                                              context,
+                                              listen: false,
+                                            ).read(WebtoonProvider.notifier);
+                                        //로딩창 띄우기
+                                        ShowDialogHelper.showLoadingWithMessage(
+                                          message: "콘텐츠를 추가중입니다.",
+                                        );
+                                        try {
+                                          if (selectedThumbImg != null) {
+                                            //이미지가 모바일에서 업로드한 데이터면
+                                            await webtoonNotifier
+                                                .addWebtoonInMobile(
+                                                  title: _titleController.text,
+                                                  desc: _descController.text,
+                                                  author:
+                                                      _authorController.text,
+                                                  userId: PrefsKeys.userId,
+                                                  fileData: selectedThumbImg!,
+                                                );
+                                          } //  이미지가 웹에서 업로드한 데이터이고 파일명도 제대로 인식했으면
+                                          else if (selectedThumbImgWeb !=
+                                                  null &&
+                                              thumbImgFileName != null) {
+                                            await webtoonNotifier
+                                                .addWebtoonInWeb(
+                                                  title: _titleController.text,
+                                                  desc: _descController.text,
+                                                  author:
+                                                      _authorController.text,
+                                                  userId: PrefsKeys.userId,
+                                                  fileDataInWeb:
+                                                      selectedThumbImgWeb!,
+                                                  fileDataNameInWeb:
+                                                      thumbImgFileName!,
+                                                );
+                                          } else {
+                                            _scaffoldMessengerKey.currentState
+                                                ?.showSnackBar(
+                                                  SnackBar(
+                                                    content: Text(
+                                                      "이미지 선택에 문제가 있습니다",
+                                                    ),
+                                                  ),
+                                                );
+
+                                            return;
+                                          }
+                                          ShowDialogHelper.closeLoading();
+                                          AppRouter.pop();
+                                          ShowDialogHelper.showSnackBar(
+                                            content: "추가 완료!",
+                                            backgroundColor: AppColors.primary,
+                                          );
+                                        } catch (err) {
+                                          //오류 발생시 스낵바 띄움
+                                          ShowDialogHelper.closeLoading();
+                                          print(err);
+                                          _scaffoldMessengerKey.currentState
+                                              ?.showSnackBar(
+                                                SnackBar(
+                                                  content: Text("에러 발생!"),
+                                                ),
+                                              );
+                                        }
+                                      }
+
+                                      //onPressed();
+                                    }
+                                  },
+                                  child: Text(
+                                    "확인",
+                                    style: AppTypography.mainCaption_1.copyWith(
+                                      color: AppColors.primary,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Flexible(
+                              child: Container(
+                                width: double.infinity,
+                                child: TextButton(
+                                  style: TextButton.styleFrom(
+                                    padding: EdgeInsets.zero,
+                                    minimumSize: Size(50, 30),
+                                    tapTargetSize:
+                                        MaterialTapTargetSize.shrinkWrap,
+                                    overlayColor: Colors.transparent,
+                                  ),
+                                  onPressed: () {
+                                    AppRouter.pop();
+                                  },
+                                  child: Text(
+                                    "취소",
+                                    style: AppTypography.mainCaption_1,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
-                  ],
+                  ),
                 ),
               ),
             ),

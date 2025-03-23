@@ -33,7 +33,8 @@ class AppColors {
 
   static const Color descTextColor = Color.fromARGB(255, 78, 78, 78);
 
-  static const Color dialogBackground = Color.fromARGB(255, 210, 210, 210);
+  static const Color dialogBackground = Color.fromARGB(255, 241, 241, 241);
+  static const Color dialogTextField = Color.fromARGB(255, 255, 255, 255);
 
   /// primary
   //static const Color primary = Color(0xFFF7E172);

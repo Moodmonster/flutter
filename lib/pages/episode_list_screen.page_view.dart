@@ -133,7 +133,7 @@ class _EpisodeListScreenState extends ConsumerState<EpisodeListScreen> {
                     width: double.infinity,
                     height: 290.h,
                     fit: BoxFit.cover,
-                    alignment: Alignment.topCenter,
+                    alignment: Alignment.center,
                     //오류 발생 시 기본 파일 보이도록
                     errorBuilder: (context, error, stackTrace) {
                       return Image.asset(
@@ -141,6 +141,7 @@ class _EpisodeListScreenState extends ConsumerState<EpisodeListScreen> {
                         width: double.infinity,
                         height: 300,
                         fit: BoxFit.cover,
+                        alignment: Alignment.center,
                       );
                     },
                   )
@@ -331,6 +332,7 @@ class MenuButtonInEpoisodeList extends ConsumerWidget {
                   }
                   ShowDialogHelper.closeLoading();
                   AppRouter.pop();
+
                   ShowDialogHelper.showSnackBar(content: "삭제 완료!");
                 } catch (err) {
                   ShowDialogHelper.closeLoading();
@@ -410,7 +412,10 @@ class EpisodeListItem extends StatelessWidget {
                             contentCode: contentInfo.code,
                           );
                           ShowDialogHelper.closeLoading();
-                          ShowDialogHelper.showSnackBar(content: "에피소드 삭제 완료!");
+                          ShowDialogHelper.showSnackBar(
+                            content: "에피소드 삭제 완료!",
+                            backgroundColor: AppColors.primary,
+                          );
                         } catch (e) {
                           ShowDialogHelper.closeLoading();
                           ShowDialogHelper.showSnackBar(content: "삭제 실패: $e");
@@ -436,6 +441,7 @@ class EpisodeListItem extends StatelessWidget {
                     width: 60.w,
                     height: 60.h,
                     fit: BoxFit.cover,
+                    alignment: Alignment.center,
                     //오류 발생 시 기본 파일 보이도록
                     errorBuilder: (context, error, stackTrace) {
                       return Image.asset(
@@ -443,6 +449,7 @@ class EpisodeListItem extends StatelessWidget {
                         width: double.infinity,
                         height: 60.h,
                         fit: BoxFit.cover,
+                        alignment: Alignment.center,
                       );
                     },
                   ),
@@ -497,372 +504,404 @@ void _showAlertForAddEpisode({
 
   //사용자가 선택한 파일의 파일명
   String? selectedFileName;
+  final _scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
 
   showDialog(
-    barrierColor: Colors.transparent,
+    //barrierColor: Colors.transparent,
     context: AppRouter.navigatorKey.currentContext!,
     builder: (BuildContext context) {
       return StatefulBuilder(
         builder: (context, setState) {
-          return AlertDialog(
-            title: Text(
-              DialogTtitle,
-              style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
-            ),
-            backgroundColor: AppColors.dialogBackground,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15.0),
-            ),
-            contentPadding: const EdgeInsets.all(20.0),
-            content: ConstrainedBox(
-              constraints: BoxConstraints(
-                maxHeight:
-                    MediaQuery.of(context).size.height * 0.7, // 화면 높이의 70%로 제한
-              ),
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 6.w),
-                width: 320.w,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  spacing: 10,
-                  children: [
-                    Column(
+          return ScaffoldMessenger(
+            key: _scaffoldMessengerKey,
+            child: Scaffold(
+              backgroundColor: Colors.transparent,
+              body: AlertDialog(
+                title: Text(
+                  DialogTtitle,
+                  style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
+                ),
+                backgroundColor: AppColors.dialogBackground,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15.0),
+                ),
+                contentPadding: const EdgeInsets.all(20.0),
+                content: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxHeight:
+                        MediaQuery.of(context).size.height *
+                        0.7, // 화면 높이의 70%로 제한
+                  ),
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 6.w),
+                    width: 320.w,
+                    child: Column(
                       mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      spacing: 10,
                       children: [
-                        Text("에피소드 제목", softWrap: true),
+                        Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text("에피소드 제목", softWrap: true),
 
-                        SizedBox(height: 5.h),
-                        Flexible(
-                          //width: 170.w,
-                          fit: FlexFit.loose,
-                          child: TextField(
-                            style: TextStyle(fontSize: 14),
-                            controller: _titleController,
-                            cursorHeight: 16,
-                            textAlignVertical: TextAlignVertical.center,
-                            decoration: InputDecoration(
-                              hoverColor: Colors.transparent,
-                              filled: true,
-                              fillColor: Colors.grey[200],
-                              border: InputBorder.none,
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide.none,
-                                borderRadius: BorderRadius.circular(6),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide.none,
-                                borderRadius: BorderRadius.circular(6),
-                              ),
-                              isDense: true,
-                              contentPadding: EdgeInsets.symmetric(
-                                vertical: 10,
-                                horizontal: 10,
+                            SizedBox(height: 5.h),
+                            Flexible(
+                              //width: 170.w,
+                              fit: FlexFit.loose,
+                              child: TextField(
+                                style: TextStyle(fontSize: 14),
+                                controller: _titleController,
+                                cursorHeight: 16,
+                                textAlignVertical: TextAlignVertical.center,
+                                decoration: InputDecoration(
+                                  hoverColor: Colors.transparent,
+                                  filled: true,
+                                  fillColor: AppColors.dialogTextField,
+                                  border: InputBorder.none,
+                                  enabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide.none,
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderSide: BorderSide.none,
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  isDense: true,
+                                  contentPadding: EdgeInsets.symmetric(
+                                    vertical: 10,
+                                    horizontal: 10,
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
+                          ],
                         ),
-                      ],
-                    ),
 
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text("파일 업로드", softWrap: true),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text("파일 업로드", softWrap: true),
 
-                        SizedBox(height: 5.h),
-                        Flexible(
-                          //width: 170.w,
-                          fit: FlexFit.loose,
-                          child: Column(
-                            children: [
-                              ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  shape: RoundedRectangleBorder(
-                                    //모서리를 둥글게
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  backgroundColor: AppColors.primary,
+                            SizedBox(height: 5.h),
+                            Flexible(
+                              //width: 170.w,
+                              fit: FlexFit.loose,
+                              child: Column(
+                                children: [
+                                  ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      shape: RoundedRectangleBorder(
+                                        //모서리를 둥글게
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      backgroundColor: AppColors.primary,
 
-                                  alignment: Alignment.centerLeft,
-                                  textStyle: const TextStyle(fontSize: 12),
-                                ),
-                                onPressed: () async {
-                                  FilePickerResult? result = await FilePicker
-                                      .platform
-                                      .pickFiles(
-                                        type: FileType.custom,
-                                        allowedExtensions: [
-                                          'jpg',
-                                          'jpeg',
-                                          'png',
-                                          'txt',
-                                        ], // 원하는 확장자 추가
-                                        withData: true, // 웹에서 bytes 사용을 위해 필요
-                                      );
+                                      alignment: Alignment.centerLeft,
+                                      textStyle: const TextStyle(fontSize: 12),
+                                    ),
+                                    onPressed: () async {
+                                      FilePickerResult? result =
+                                          await FilePicker.platform.pickFiles(
+                                            type: FileType.custom,
+                                            allowedExtensions: [
+                                              'jpg',
+                                              'jpeg',
+                                              'png',
+                                              'txt',
+                                            ], // 원하는 확장자 추가
+                                            withData:
+                                                true, // 웹에서 bytes 사용을 위해 필요
+                                          );
 
-                                  if (result != null &&
-                                      result.files.single.bytes != null) {
-                                    setState(() {
-                                      selectedFileName =
-                                          result.files.single.name;
+                                      if (result != null &&
+                                          result.files.single.bytes != null) {
+                                        setState(() {
+                                          selectedFileName =
+                                              result.files.single.name;
 
-                                      if (kIsWeb) {
-                                        selectedFileInWeb =
-                                            result.files.single.bytes!;
-                                      } else {
-                                        selectedFile = File(
-                                          result.files.single.path!,
-                                        );
+                                          if (kIsWeb) {
+                                            selectedFileInWeb =
+                                                result.files.single.bytes!;
+                                          } else {
+                                            selectedFile = File(
+                                              result.files.single.path!,
+                                            );
+                                          }
+                                        });
                                       }
-                                    });
-                                  }
-                                },
-                                child: Align(
-                                  alignment: Alignment.center,
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Icon(
-                                        Icons.upload_file,
-                                        color: AppColors.white,
+                                    },
+                                    child: Align(
+                                      alignment: Alignment.center,
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Icon(
+                                            Icons.upload_file,
+                                            color: AppColors.white,
+                                          ),
+                                          Text(
+                                            "파일 업로드",
+                                            style: TextStyle(
+                                              color: AppColors.white,
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                      Text(
-                                        "파일 업로드",
-                                        style: TextStyle(
-                                          color: AppColors.white,
-                                        ),
+                                    ),
+                                  ),
+                                  if ((selectedFile != null ||
+                                          selectedFileInWeb != null) &&
+                                      selectedFileName != null)
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 8.0,
+                                        vertical: 8,
                                       ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              if ((selectedFile != null ||
-                                      selectedFileInWeb != null) &&
-                                  selectedFileName != null)
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 8.0,
-                                    vertical: 8,
-                                  ),
-                                  child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Container(
-                                        height: 60.h,
-                                        width: 60.w,
+                                      child: Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Container(
+                                            height: 60.h,
+                                            width: 60.w,
 
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(
-                                            10,
-                                          ),
-                                          border: Border.all(
-                                            color: Colors.grey,
-                                          ),
-                                        ),
-                                        //선택한 파일 미리보기(이미지면)
-                                        child:
-                                            selectedFile != null
-                                                ? (selectedFileName!.endsWith(
-                                                      '.txt',
-                                                    )
-                                                    ? Center(
-                                                      child: Icon(
-                                                        Icons
-                                                            .insert_drive_file_outlined,
-                                                      ),
-                                                    )
-                                                    : ClipRRect(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                            10,
-                                                          ),
-                                                      child: Image.file(
-                                                        selectedFile!,
-                                                        fit: BoxFit.cover,
-                                                      ),
-                                                    ))
-                                                : (selectedFileName!.endsWith(
-                                                      '.txt',
-                                                    )
-                                                    ? Center(
-                                                      child: Icon(
-                                                        Icons
-                                                            .insert_drive_file_outlined,
-                                                      ),
-                                                    )
-                                                    : ClipRRect(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                            10,
-                                                          ),
-                                                      child: Image.memory(
-                                                        selectedFileInWeb!,
-                                                        fit: BoxFit.cover,
-                                                      ),
-                                                    )),
-                                      ),
-                                      SizedBox(width: 5.w),
-                                      Flexible(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              "파일명",
-                                              style: TextStyle(
-                                                fontSize: 10,
-                                                fontWeight: FontWeight.bold,
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              border: Border.all(
+                                                color: Colors.grey,
                                               ),
                                             ),
-                                            Text(
-                                              selectedFileName ?? "",
-                                              //softWrap: true,
-                                              style: TextStyle(fontSize: 10),
+                                            //선택한 파일 미리보기(이미지면)
+                                            child:
+                                                selectedFile != null
+                                                    ? (selectedFileName!
+                                                            .endsWith('.txt')
+                                                        ? Center(
+                                                          child: Icon(
+                                                            Icons
+                                                                .insert_drive_file_outlined,
+                                                          ),
+                                                        )
+                                                        : ClipRRect(
+                                                          borderRadius:
+                                                              BorderRadius.circular(
+                                                                10,
+                                                              ),
+                                                          child: Image.file(
+                                                            selectedFile!,
+                                                            fit: BoxFit.cover,
+                                                            alignment:
+                                                                Alignment
+                                                                    .center,
+                                                          ),
+                                                        ))
+                                                    : (selectedFileName!
+                                                            .endsWith('.txt')
+                                                        ? Center(
+                                                          child: Icon(
+                                                            Icons
+                                                                .insert_drive_file_outlined,
+                                                          ),
+                                                        )
+                                                        : ClipRRect(
+                                                          borderRadius:
+                                                              BorderRadius.circular(
+                                                                10,
+                                                              ),
+                                                          child: Image.memory(
+                                                            selectedFileInWeb!,
+                                                            fit: BoxFit.cover,
+                                                            alignment:
+                                                                Alignment
+                                                                    .center,
+                                                          ),
+                                                        )),
+                                          ),
+                                          SizedBox(width: 5.w),
+                                          Flexible(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  "파일명",
+                                                  style: TextStyle(
+                                                    fontSize: 10,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                                Text(
+                                                  selectedFileName ?? "",
+                                                  //softWrap: true,
+                                                  style: TextStyle(
+                                                    fontSize: 10,
+                                                  ),
+                                                ),
+                                              ],
                                             ),
-                                          ],
-                                        ),
+                                          ),
+                                        ],
                                       ),
-                                    ],
+                                    ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        SizedBox(height: 5.h),
+                        //구분선
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Container(
+                                height: 0.5,
+                                color: AppColors.darkGrey,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Flexible(
+                              child: Container(
+                                width: double.infinity,
+                                child: TextButton(
+                                  style: TextButton.styleFrom(
+                                    padding: EdgeInsets.zero,
+                                    minimumSize: Size(50, 30),
+                                    tapTargetSize:
+                                        MaterialTapTargetSize.shrinkWrap,
+                                    overlayColor: Colors.transparent,
+                                  ),
+                                  onPressed: () async {
+                                    //입력 안된 값이 있을 경우
+                                    if (_titleController.text.isEmpty ||
+                                        (selectedFileName == null)) {
+                                      _scaffoldMessengerKey.currentState
+                                          ?.showSnackBar(
+                                            SnackBar(
+                                              content: Text(
+                                                "입력 안 된 값이 있습니다",
+                                                style: TextStyle(
+                                                  color:
+                                                      AppColors.mainTextColor,
+                                                ),
+                                              ),
+                                              backgroundColor:
+                                                  AppColors.secondary,
+                                            ),
+                                          );
+                                    } else {
+                                      //모든 값 입력 잘 되었다면
+                                      final episodeNotifier =
+                                          ProviderScope.containerOf(
+                                            context,
+                                            listen: false,
+                                          ).read(EpisodeProvider.notifier);
+                                      //로딩창 띄우기
+                                      ShowDialogHelper.showLoadingWithMessage(
+                                        message: "에피소드를 추가중입니다.",
+                                      );
+                                      try {
+                                        if (selectedFile != null) {
+                                          //파일이 모바일에서 업로드한 데이터면
+
+                                          await episodeNotifier
+                                              .addEpisodeInMobile(
+                                                contentType:
+                                                    contentInfo.contentType,
+                                                contentCode: contentInfo.code,
+                                                epTitle: _titleController.text,
+                                                uploadDate: DateTime.now(),
+                                                episodeFile: selectedFile!,
+                                              );
+                                        } //  파일가 웹에서 업로드한 데이터이고 파일명도 제대로 인식했으면
+                                        else if (selectedFileInWeb != null &&
+                                            selectedFileName != null) {
+                                          await episodeNotifier.addEpisodeInWeb(
+                                            contentType:
+                                                contentInfo.contentType,
+                                            contentCode: contentInfo.code,
+                                            epTitle: _titleController.text,
+                                            uploadDate: DateTime.now(),
+                                            episodeFileInWeb:
+                                                selectedFileInWeb!,
+                                            episodeFileNameInWeb:
+                                                selectedFileName!,
+                                          );
+                                        } else {
+                                          _scaffoldMessengerKey.currentState
+                                              ?.showSnackBar(
+                                                SnackBar(
+                                                  content: Text(
+                                                    "파일 선택에 문제가 있습니다",
+                                                  ),
+                                                ),
+                                              );
+
+                                          return;
+                                        }
+                                        ShowDialogHelper.closeLoading();
+                                        AppRouter.pop();
+                                        ShowDialogHelper.showSnackBar(
+                                          content: "추가 완료!",
+                                          backgroundColor: AppColors.primary,
+                                        );
+                                      } catch (err) {
+                                        //오류 발생시 스낵바 띄움
+                                        ShowDialogHelper.closeLoading();
+                                        print(err);
+                                        _scaffoldMessengerKey.currentState
+                                            ?.showSnackBar(
+                                              SnackBar(content: Text("에러 발생!")),
+                                            );
+                                      }
+
+                                      //onPressed();
+                                    }
+                                  },
+                                  child: Text(
+                                    "확인",
+                                    style: AppTypography.mainCaption_1.copyWith(
+                                      color: AppColors.primary,
+                                    ),
                                   ),
                                 ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-
-                    SizedBox(height: 5.h),
-                    //구분선
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Container(
-                            height: 0.5,
-                            color: AppColors.darkGrey,
-                          ),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Flexible(
-                          child: Container(
-                            width: double.infinity,
-                            child: TextButton(
-                              style: TextButton.styleFrom(
-                                padding: EdgeInsets.zero,
-                                minimumSize: Size(50, 30),
-                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                overlayColor: Colors.transparent,
                               ),
-                              onPressed: () async {
-                                //입력 안된 값이 있을 경우
-                                if (_titleController.text.isEmpty ||
-                                    (selectedFileName == null)) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                        "압력 안 된 값이 있습니다",
-                                        style: TextStyle(
-                                          color: AppColors.black,
-                                        ),
-                                      ),
-                                      backgroundColor: AppColors.secondary,
-                                    ),
-                                  );
-                                } else {
-                                  //모든 값 입력 잘 되었다면
-                                  final episodeNotifier =
-                                      ProviderScope.containerOf(
-                                        context,
-                                        listen: false,
-                                      ).read(EpisodeProvider.notifier);
-                                  //로딩창 띄우기
-                                  ShowDialogHelper.showLoadingWithMessage(
-                                    message: "에피소드를 추가중입니다.",
-                                  );
-                                  try {
-                                    if (selectedFile != null) {
-                                      //파일이 모바일에서 업로드한 데이터면
-
-                                      await episodeNotifier.addEpisodeInMobile(
-                                        contentType: contentInfo.contentType,
-                                        contentCode: contentInfo.code,
-                                        epTitle: _titleController.text,
-                                        uploadDate: DateTime.now(),
-                                        episodeFile: selectedFile!,
-                                      );
-                                    } //  파일가 웹에서 업로드한 데이터이고 파일명도 제대로 인식했으면
-                                    else if (selectedFileInWeb != null &&
-                                        selectedFileName != null) {
-                                      await episodeNotifier.addEpisodeInWeb(
-                                        contentType: contentInfo.contentType,
-                                        contentCode: contentInfo.code,
-                                        epTitle: _titleController.text,
-                                        uploadDate: DateTime.now(),
-                                        episodeFileInWeb: selectedFileInWeb!,
-                                        episodeFileNameInWeb: selectedFileName!,
-                                      );
-                                    } else {
-                                      ShowDialogHelper.showSnackBar(
-                                        content: "파일 선택에 문제가 있습니다",
-                                      );
-                                      return;
-                                    }
-                                    ShowDialogHelper.closeLoading();
+                            ),
+                            Flexible(
+                              child: Container(
+                                width: double.infinity,
+                                child: TextButton(
+                                  style: TextButton.styleFrom(
+                                    padding: EdgeInsets.zero,
+                                    minimumSize: Size(50, 30),
+                                    tapTargetSize:
+                                        MaterialTapTargetSize.shrinkWrap,
+                                    overlayColor: Colors.transparent,
+                                  ),
+                                  onPressed: () {
                                     AppRouter.pop();
-                                    ShowDialogHelper.showSnackBar(
-                                      content: "추가 완료!",
-                                    );
-                                  } catch (err) {
-                                    //오류 발생시 스낵바 띄움
-                                    ShowDialogHelper.closeLoading();
-                                    ShowDialogHelper.showSnackBar(
-                                      content: "${err}",
-                                    );
-                                  }
+                                  },
 
-                                  //onPressed();
-                                }
-                              },
-                              child: Text(
-                                "확인",
-                                style: AppTypography.mainCaption_1.copyWith(
-                                  color: AppColors.primary,
+                                  child: Text(
+                                    "취소",
+
+                                    style: AppTypography.mainCaption_1,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        ),
-                        Flexible(
-                          child: Container(
-                            width: double.infinity,
-                            child: TextButton(
-                              style: TextButton.styleFrom(
-                                padding: EdgeInsets.zero,
-                                minimumSize: Size(50, 30),
-                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                overlayColor: Colors.transparent,
-                              ),
-                              onPressed: () {
-                                AppRouter.pop();
-                              },
-
-                              child: Text(
-                                "취소",
-
-                                style: AppTypography.mainCaption_1,
-                              ),
-                            ),
-                          ),
+                          ],
                         ),
                       ],
                     ),
-                  ],
+                  ),
                 ),
               ),
             ),

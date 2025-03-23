@@ -49,7 +49,7 @@ class ContentScreen extends ConsumerWidget {
     Content? mainContent,
   ) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 13.0),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         children: [
           Align(
@@ -98,12 +98,14 @@ class ContentScreen extends ConsumerWidget {
                           width: double.infinity,
                           height: 280.h,
                           fit: BoxFit.cover,
+                          alignment: Alignment.center,
                           errorBuilder: (context, error, stackTrace) {
                             return Image.asset(
                               "assets/imgs/default_img.jpg",
                               width: double.infinity,
                               height: 280.h,
                               fit: BoxFit.cover,
+                              alignment: Alignment.center,
                             );
                           },
                         )
@@ -112,6 +114,7 @@ class ContentScreen extends ConsumerWidget {
                           width: double.infinity,
                           height: 280.h,
                           fit: BoxFit.cover,
+                          alignment: Alignment.center,
                         ),
 
                     // 제목과 설명
@@ -173,6 +176,7 @@ class ContentScreen extends ConsumerWidget {
   }
 }
 
+//콘텐츠들 바둑판으로 나오는 부분Z
 class ContentMainGridList extends StatelessWidget {
   //콘텐츠 데이터 리스트
   final List<Content> contentList;
@@ -207,8 +211,8 @@ class ContentMainGridList extends StatelessWidget {
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 3, // 한 줄에 3개씩 배치
         crossAxisSpacing: 12, // 가로 간격
-        mainAxisSpacing: 14, // 세로 간격
-        childAspectRatio: 0.8, // 아이템의 가로세로 비율
+        mainAxisSpacing: 6, // 세로 간격
+        childAspectRatio: 0.6, // 아이템의 가로세로 비율
       ),
       itemBuilder: (context, index) {
         final content = contentList[index];
@@ -225,48 +229,50 @@ class ContentCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Container(
-      decoration: BoxDecoration(
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.5),
-            spreadRadius: 0,
-            blurRadius: 8.w,
-            offset: Offset(2.w, 6.h),
-          ),
-        ],
-      ),
-      child: GestureDetector(
-        //클릭감지
-        onTap: () async {
-          //콘텐츠가 소설이면
-          if (content.contentType == MyContentType.Novel) {
-            await ref
-                .read(NovelProvider.notifier)
-                .clickCountPlusOne(code: content.code); // 클릭수 증가 함수 호출
-          } else {
-            //콘텐츠가 웹툰이면
-            await ref
-                .read(WebtoonProvider.notifier)
-                .clickCountPlusOne(code: content.code); // 클릭수 증가 함수 호출
-          }
-          Navigator.pushNamed(
-            context,
-            Routes.episodeListScreen, // /episodes 경로로 이동
-            arguments: content, // 컨텐츠 정보 전달해준다
-          );
-        },
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(12),
-          child: Stack(
-            alignment: Alignment.bottomLeft,
-            children: [
+    return GestureDetector(
+      //클릭감지
+      onTap: () async {
+        //콘텐츠가 소설이면
+        if (content.contentType == MyContentType.Novel) {
+          await ref
+              .read(NovelProvider.notifier)
+              .clickCountPlusOne(code: content.code); // 클릭수 증가 함수 호출
+        } else {
+          //콘텐츠가 웹툰이면
+          await ref
+              .read(WebtoonProvider.notifier)
+              .clickCountPlusOne(code: content.code); // 클릭수 증가 함수 호출
+        }
+        Navigator.pushNamed(
+          context,
+          Routes.episodeListScreen, // /episodes 경로로 이동
+          arguments: content, // 컨텐츠 정보 전달해준다
+        );
+      },
+      child: Column(
+        spacing: 4,
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.5),
+                  spreadRadius: 0,
+                  blurRadius: 8.w,
+                  offset: Offset(2.w, 4.h),
+                ),
+              ],
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child:
               // 웹툰 이미지
               Image.network(
                 content.thumbnailUrl,
                 width: double.infinity,
-                height: double.infinity,
+                height: 170.h,
                 fit: BoxFit.cover,
+                alignment: Alignment.center,
                 //오류 발생 시 기본 이미지 보이도록
                 errorBuilder: (context, error, stackTrace) {
                   return Image.asset(
@@ -274,47 +280,41 @@ class ContentCard extends ConsumerWidget {
                     width: double.infinity,
                     height: 280.h,
                     fit: BoxFit.cover,
+                    alignment: Alignment.center,
                   );
                 },
               ),
-
-              // 반투명 검은색 배경
-              Container(
-                padding: const EdgeInsets.all(8),
-                width: double.infinity,
-                decoration: BoxDecoration(color: Colors.black.withOpacity(0.5)),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // 웹툰 제목
-                    Text(
-                      content.title,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-
-                    // 작가명
-                    Text(
-                      content.author,
-                      style: const TextStyle(
-                        color: Colors.white70,
-                        fontSize: 12,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
+            ),
+          ),
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // 웹툰 제목
+              Text(
+                content.title,
+                style: const TextStyle(
+                  color: AppColors.mainTextColor,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 12,
                 ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+
+              // 작가명
+              Text(
+                content.author,
+                style: const TextStyle(
+                  color: AppColors.descTextColor,
+                  fontSize: 10,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
             ],
           ),
-        ),
+        ],
       ),
     );
   }

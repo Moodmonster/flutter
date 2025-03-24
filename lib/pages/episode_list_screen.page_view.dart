@@ -255,6 +255,7 @@ class _EpisodeListScreenState extends ConsumerState<EpisodeListScreen> {
             physics: NeverScrollableScrollPhysics(),
             itemBuilder: (context, index) {
               return EpisodeListItem(
+                key: ValueKey(epList[index].code),
                 contentInfo: contentInfo,
                 episodeInfo: epList[index],
               );

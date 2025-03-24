@@ -456,6 +456,7 @@ class EpisodeListItem extends StatelessWidget {
         onTap: () {
           //선호 음악 프롬프트 입력 모달창 출력
           _showAlertWithTextFieldAndActionAndCancel(
+            contentInfo: contentInfo,
             episodeInfo: episodeInfo,
             title: "음악 분위기 입력 ",
             message: "원하는 음악 분위기를 입력해주세요. \n 빈칸이면 알아서 생성됨",
@@ -473,6 +474,7 @@ class EpisodeListItem extends StatelessWidget {
 
 ///사용자로부터 값 입력 받을 수 있고 확인을 누르면 Action이 수행, 사용자가 임의로 취소 가능한 알림창
 void _showAlertWithTextFieldAndActionAndCancel({
+  required Content contentInfo,
   required ContentEpisode episodeInfo,
   required String title,
   required String message,
@@ -536,8 +538,9 @@ void _showAlertWithTextFieldAndActionAndCancel({
               AppRouter.pushNamed(
                 Routes.novelParagraphsShowScreen,
                 args: {
-                  'episode': episodeInfo,
+                  'episodeInfo': episodeInfo,
                   'prompt': _SongMoodEnterController.text,
+                  'contentInfo': contentInfo,
                 },
               );
             },

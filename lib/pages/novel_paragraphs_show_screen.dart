@@ -5,6 +5,7 @@ import 'package:just_audio/just_audio.dart';
 import 'package:moodmonster/config/routes/app_router.dart';
 import 'package:moodmonster/feature/error/data_null_screen.dart';
 import 'package:moodmonster/helpers/constants/app_colors.dart';
+import 'package:moodmonster/models/content.model.dart';
 import 'package:moodmonster/models/content_episode.model.dart';
 import 'package:moodmonster/models/novel_paragraph.model.dart';
 import 'package:moodmonster/providers/novel_paragraph_provider.dart';
@@ -20,6 +21,7 @@ class NovelParagraphsShowScreen extends ConsumerStatefulWidget {
 class _NovelParagraphsShowScreenState
     extends ConsumerState<NovelParagraphsShowScreen> {
   ContentEpisode? episodeInfo;
+  Content? contentInfo;
   bool _initialized = false;
 
   //최초로 해당 에피소드의 단락 데이터들 가져오기
@@ -31,10 +33,12 @@ class _NovelParagraphsShowScreenState
     //현재 routeing방식은 path파라미터 방식말고 arguments에 보내는 방식 -> 나중에 수정해함
     final args =
         ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
-    // arguments에서 episode에 해당하는 데이터 뽑고
-    episodeInfo = args?['episode'] as ContentEpisode?;
-    // arguments에서 prompt(원하는 음악 분위기)에 해당하는 데이터 뽑는다
+    // arguments에서 episodeInfo에 해당하는 데이터 뽑고
+    episodeInfo = args?['episodeInfo'] as ContentEpisode?;
+    // arguments에서 prompt(원하는 음악 분위기)에 해당하는 데이터 뽑고
     final prompt = args?['prompt'] as String? ?? '';
+    // arguments에서 contentInfo에 해당하는 데이터 뽑는다(표지 보이려면 contentInfo도 들고 와야함)
+    contentInfo = args?['contentInfo'] as Content?;
 
     print("episodeInfo${episodeInfo}");
     print("prompt:${prompt}");
@@ -52,11 +56,13 @@ class _NovelParagraphsShowScreenState
   @override
   Widget build(BuildContext context) {
     final novelParagraphsAsync = ref.watch(NovelParagraphProvider);
-    //episodeInfo가 없으면 데이터 없다는 내용의 화면 띄운다
-    if (episodeInfo == null) {
+
+    //episodeInfo나 contentInfo가 없으면 데이터 없다는 내용의 화면 띄운다
+    if (episodeInfo == null || contentInfo == null) {
       return DataNullScreen();
     }
 
+    //episodeInfo,contentInfo 둘다 있으면
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -68,7 +74,12 @@ class _NovelParagraphsShowScreenState
                 //데이터 정상적으로 있는 상태라면
                 data: (paragraphs) {
                   AudioPlayer _audioPlayer = AudioPlayer();
-                  return _buildParagraphsScreenUI(paragraphs, _audioPlayer);
+                  return _buildParagraphsScreenUI(
+                    contentInfo!,
+                    episodeInfo!,
+                    paragraphs,
+                    _audioPlayer,
+                  );
                 },
                 // 로딩중이라면
                 loading: () => Center(child: CircularProgressIndicator()),
@@ -170,17 +181,73 @@ class __MyAppBarState extends State<_MyAppBar> {
   }
 }
 
-//단락들 쭉 나오게 하는 listView
+// 화면 전체 UI
 Widget _buildParagraphsScreenUI(
+  Content contentInfo,
+  ContentEpisode episodeInfo,
   List<NovelParagraph> paragraphs,
   AudioPlayer _audioPlayer,
 ) {
-  return ListView.builder(
-    padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
-    itemCount: paragraphs.length,
-    itemBuilder: (context, index) {
-      return ParagraphItem(paragraph: paragraphs[index]);
-    },
+  return SingleChildScrollView(
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        //표지 사진
+        Image.network(
+          contentInfo.thumbnailUrl,
+          width: double.infinity,
+          fit: BoxFit.fitWidth,
+          alignment: Alignment.center,
+          //오류 발생 시 기본 파일 보이도록
+          errorBuilder: (context, error, stackTrace) {
+            return Image.asset(
+              "assets/imgs/default_img.jpg",
+              width: double.infinity,
+              fit: BoxFit.fitWidth,
+              alignment: Alignment.center,
+            );
+          },
+        ),
+        //에피소드 제목 부분
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 24.h),
+          child: IntrinsicHeight(
+            child: Row(
+              children: [
+                //왼쪽 막대
+                Container(
+                  margin: EdgeInsets.only(right: 14.w),
+                  width: 3.w, // 막대 두께
+                  //height: 30.h, // 막대 길이
+                  color: AppColors.mainTextColor, // 색상
+                ),
+                Expanded(
+                  //제목출력
+                  child: Text(
+                    episodeInfo.epTitle,
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+                    softWrap: true,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+
+        //단락들 쭉 나오게 하는 listView
+        ListView.builder(
+          physics: NeverScrollableScrollPhysics(), // 중복 스크롤 방지
+          shrinkWrap: true, // Column 내에서 높이 문제 해결
+          padding: EdgeInsets.symmetric(horizontal: 20.w),
+          itemCount: paragraphs.length,
+          itemBuilder: (context, index) {
+            return ParagraphItem(paragraph: paragraphs[index]);
+          },
+        ),
+
+        Container(height: 300.h),
+      ],
+    ),
   );
 }
 
@@ -195,7 +262,7 @@ class ParagraphItem extends StatefulWidget {
 }
 
 class _ParagraphItemState extends State<ParagraphItem> {
-  // 내 플레이어
+  // 내 오디오 플레이어
   late final AudioPlayer _player;
 
   // static변수로 현재 재생중인 플레이어 정보 담는다
@@ -210,7 +277,7 @@ class _ParagraphItemState extends State<ParagraphItem> {
 
   @override
   void dispose() {
-    //플레이어 해제 -> 음악 자동 중지 되긴 하는데... 화면에서 사라져도 displose되지 않는 것들이 있음
+    //플레이어 해제 -> 음악 자동 중지 되긴 하는데... 화면에서 사라져도 displose되지 않는 itemWidget들이 있음
     _player.dispose();
     print("player dispose :${widget.paragraph.text.substring(0, 4)}");
     super.dispose();

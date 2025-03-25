@@ -6,6 +6,7 @@ import 'package:moodmonster/models/content.model.dart';
 import 'package:moodmonster/models/content_episode.model.dart';
 
 class EpisodeService {
+  const EpisodeService._();
   // 특정 콘텐츠에 속한 에피소드 가져오기
   static Future<List<ContentEpisode>> fetchEpisodesByContentCode(
     MyContentType contentType,

@@ -5,6 +5,7 @@ import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 
 class ApiService {
+  const ApiService._();
   //백엔드 주소
   static const String baseUrl = "http://20.196.66.215:5000";
 

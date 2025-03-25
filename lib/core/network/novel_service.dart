@@ -5,6 +5,7 @@ import 'package:moodmonster/core/network/api_service.dart';
 import 'package:moodmonster/models/content.model.dart';
 
 class NovelService {
+  const NovelService._();
   //모든 소설 데이터 가져오기
   static Future<List<Content>> fetchNovels() async {
     print("fetch Novels");

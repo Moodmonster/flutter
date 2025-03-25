@@ -97,7 +97,7 @@ class _NovelParagraphsShowScreenState
 //내가 만든 앱바
 class _MyAppBar extends StatefulWidget {
   final ContentEpisode episodeInfo;
-  _MyAppBar({super.key, required this.episodeInfo});
+  _MyAppBar({required this.episodeInfo});
 
   @override
   State<_MyAppBar> createState() => __MyAppBarState();

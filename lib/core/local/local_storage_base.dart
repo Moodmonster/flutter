@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:moodmonster/core/local/local_storage_keys.dart';
-import 'package:moodmonster/helpers/extensions/showdialog_helper.dart';
+import 'package:moodmonster/helpers/extensions/get_device_id.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 late LocalStorageBase prefs;
@@ -23,16 +23,11 @@ class LocalStorageBase {
     _secureStorage ??= const FlutterSecureStorage();
     prefs = LocalStorageBase();
     try {
-      _idToken = prefs.getString(PrefsKeys.userId);
+      _idToken = await prefs.getEncrypted(PrefsKeys.userId);
     } catch(e) {
-      _idToken = 'exception';
       prefs.clearEncrypted();
-      //SignOUT HERE
-      ShowDialogHelper.showAlert(
-        title: '데이터 무결성 경고', 
-        message: '데이터 임의수정이 감지되었습니다. 보안 이슈 트래킹을 위해 서버에 기록됩니다. '
-          '\n악의적인 데이터 조작 행위가 반복되면 영구정지와는 별개로 법적 처벌을 받으실 수 있습니다.'
-      );
+      _idToken = await GetDeviceID.getId();
+      prefs.setEncrypted(PrefsKeys.userId, _idToken);
     }
   }
 

@@ -9,6 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:moodmonster/config/routes/app_router.dart';
 import 'package:moodmonster/config/routes/routes.dart';
+import 'package:moodmonster/core/local/local_storage_base.dart';
 import 'package:moodmonster/core/local/local_storage_keys.dart';
 import 'package:moodmonster/feature/error/data_null_screen.dart';
 import 'package:moodmonster/helpers/constants/app_colors.dart';
@@ -78,7 +79,7 @@ class _EpisodeListScreenState extends ConsumerState<EpisodeListScreen> {
       //목차 추가 버튼 : 해당 콘텐츠 생성자가 본인일때만 보인다
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton:
-          contentInfo!.userId == PrefsKeys.userId
+          contentInfo!.userId == prefs.getIdToken()
               ? FloatingActionButton(
                 onPressed: () {
                   _showAlertForAddEpisode(
@@ -337,7 +338,7 @@ class MenuButtonInEpoisodeList extends ConsumerWidget {
             .where(
               (value) =>
                   value != MenuType.Delete ||
-                  contentInfo!.userId == PrefsKeys.userId,
+                  contentInfo!.userId == prefs.getIdToken(),
             )
             .map(
               (value) => PopupMenuItem(
@@ -374,7 +375,7 @@ class EpisodeListItem extends StatelessWidget {
         contentPadding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 10.w),
         //우측 삭제 버튼(작가가 본인일때만 보인다)
         trailing:
-            (contentInfo.userId == PrefsKeys.userId)
+            (contentInfo.userId == prefs.getIdToken())
                 ? IconButton(
                   onPressed: () {
                     ShowDialogHelper.showAlertWithActionAndCancel(

@@ -6,6 +6,7 @@ import 'package:moodmonster/core/network/api_service.dart';
 import 'package:moodmonster/models/content.model.dart';
 
 class WebtoonService {
+  const WebtoonService._();
   //모든 웹툰 데이터 가져오기
   static Future<List<Content>> fetchWebtoons() async {
     print("fetch Webtoons");

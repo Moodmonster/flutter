@@ -6,6 +6,7 @@ import 'package:moodmonster/models/content.model.dart';
 import 'package:moodmonster/models/novel_paragraph.model.dart';
 
 class NovelParagraphsService {
+  const NovelParagraphsService._();
   // 특정 에피소드에 속한 내용 단락들 가져오기
   static Future<List<NovelParagraph>> fetchNovelParagraphsByEpCode({
     required String epCode,

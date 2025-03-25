@@ -31,10 +31,10 @@ _ContentEpisode _$ContentEpisodeFromJson(Map<String, dynamic> json) {
 }
 
 Map<String, dynamic> _$ContentEpisodeToJson(_ContentEpisode instance) =>
-    <String, dynamic>{
-      'code': instance.code,
-      'contentCode': instance.contentCode,
-      'epTitle': instance.epTitle,
-      'uploadDate': instance.uploadDate.toIso8601String(),
-      'thumbnailUrl': instance.thumbnailUrl,
-    };
+  <String, dynamic>{
+    'code': instance.code,
+    'contentCode': instance.contentCode,
+    'epTitle': instance.epTitle,
+    'uploadDate': instance.uploadDate.toIso8601String(),
+    'thumbnailUrl': instance.thumbnailUrl,
+  };

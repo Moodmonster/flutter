@@ -420,7 +420,7 @@ class EpisodeListItem extends StatelessWidget {
                 ? ClipRRect(
                   borderRadius: BorderRadius.circular(8),
                   child: Image.asset(
-                    episodeInfo.thumbnailUrl,
+                    episodeInfo.thumbnailUrl ?? 'e',
                     width: 60.w,
                     height: 60.h,
                     fit: BoxFit.cover,

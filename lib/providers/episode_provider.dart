@@ -60,6 +60,32 @@ class EpisodeNotifier extends StateNotifier<AsyncValue<List<ContentEpisode>>> {
     }
   }
 
+  // 에피소드 추가 파일 여러개(모바일에서)
+  Future<void> addEpisodeInMobileForFiles({
+    required MyContentType contentType,
+    required String contentCode,
+    required String epTitle,
+    required DateTime uploadDate,
+    required List<File> episodeFiles,
+  }) async {
+    try {
+      await EpisodeService.createEpisodeInMobileForFiles(
+        contentType: contentType,
+        contentCode: contentCode,
+        epTitle: epTitle,
+        uploadDate: uploadDate,
+        episodeFiles: episodeFiles,
+      );
+      // 에피소드 목록 새로 로드
+      await loadEpisodesByContentCode(
+        contentType: contentType,
+        contentCode: contentCode,
+      );
+    } catch (e) {
+      throw Exception("에피소드 추가 실패: $e");
+    }
+  }
+
   // 에피소드 추가(웹에서)
   Future<void> addEpisodeInWeb({
     required MyContentType contentType,
@@ -77,6 +103,34 @@ class EpisodeNotifier extends StateNotifier<AsyncValue<List<ContentEpisode>>> {
         episodeFileInWeb: episodeFileInWeb,
         episodeFileNameInWeb: episodeFileNameInWeb,
         uploadDate: uploadDate,
+      );
+      // 에피소드 목록 새로 로드
+      await loadEpisodesByContentCode(
+        contentType: contentType,
+        contentCode: contentCode,
+      );
+    } catch (e) {
+      throw Exception("에피소드 추가 실패: $e");
+    }
+  }
+
+  // 에피소드 추가(웹에서)
+  Future<void> addEpisodeInWebForFiles({
+    required MyContentType contentType,
+    required String contentCode,
+    required String epTitle,
+    required DateTime uploadDate,
+    required List<Uint8List> episodeFilesInWeb,
+    required List<String> episodeFileNamesInWeb,
+  }) async {
+    try {
+      await EpisodeService.createEpisodeInWebForFiles(
+        contentType: contentType,
+        contentCode: contentCode,
+        epTitle: epTitle,
+        uploadDate: uploadDate,
+        episodeFilesInWeb: episodeFilesInWeb,
+        episodeFileNamesInWeb: episodeFileNamesInWeb,
       );
       // 에피소드 목록 새로 로드
       await loadEpisodesByContentCode(

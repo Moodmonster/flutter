@@ -9,7 +9,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:moodmonster/config/routes/app_router.dart';
 import 'package:moodmonster/config/routes/routes.dart';
-import 'package:moodmonster/core/local/local_storage_base.dart';
 import 'package:moodmonster/core/local/local_storage_keys.dart';
 import 'package:moodmonster/feature/error/data_null_screen.dart';
 import 'package:moodmonster/helpers/constants/app_colors.dart';
@@ -79,15 +78,24 @@ class _EpisodeListScreenState extends ConsumerState<EpisodeListScreen> {
       //목차 추가 버튼 : 해당 콘텐츠 생성자가 본인일때만 보인다
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton:
-          contentInfo!.userId == prefs.getIdToken()
+          contentInfo!.userId == PrefsKeys.userId
               ? FloatingActionButton(
                 onPressed: () {
-                  _showAlertForAddEpisode(
-                    DialogTtitle: "에피소드 추가",
-                    cancelMsg: "취소",
-                    enterMsg: "확인",
-                    contentInfo: contentInfo!,
-                  );
+                  if (contentInfo?.contentType == MyContentType.Webtoon) {
+                    _showAlertForAddWebtoonEpisode(
+                      DialogTtitle: "에피소드 추가",
+                      cancelMsg: "취소",
+                      enterMsg: "확인",
+                      contentInfo: contentInfo!,
+                    );
+                  }
+
+                  // _showAlertForAddEpisode(
+                  //   DialogTtitle: "에피소드 추가",
+                  //   cancelMsg: "취소",
+                  //   enterMsg: "확인",
+                  //   contentInfo: contentInfo!,
+                  // );
                 },
                 child: Icon(Icons.add, color: AppColors.background),
                 elevation: 10,
@@ -267,6 +275,7 @@ class _EpisodeListScreenState extends ConsumerState<EpisodeListScreen> {
     );
   }
 }
+//썸네일 사진+그림자 파트
 
 //우측 상단 메뉴버튼
 class MenuButtonInEpoisodeList extends ConsumerWidget {
@@ -338,7 +347,7 @@ class MenuButtonInEpoisodeList extends ConsumerWidget {
             .where(
               (value) =>
                   value != MenuType.Delete ||
-                  contentInfo!.userId == prefs.getIdToken(),
+                  contentInfo!.userId == PrefsKeys.userId,
             )
             .map(
               (value) => PopupMenuItem(
@@ -375,7 +384,7 @@ class EpisodeListItem extends StatelessWidget {
         contentPadding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 10.w),
         //우측 삭제 버튼(작가가 본인일때만 보인다)
         trailing:
-            (contentInfo.userId == prefs.getIdToken())
+            (contentInfo.userId == PrefsKeys.userId)
                 ? IconButton(
                   onPressed: () {
                     ShowDialogHelper.showAlertWithActionAndCancel(
@@ -420,17 +429,18 @@ class EpisodeListItem extends StatelessWidget {
             contentInfo.contentType == MyContentType.Webtoon
                 ? ClipRRect(
                   borderRadius: BorderRadius.circular(8),
-                  child: Image.asset(
+                  child: Image.network(
                     episodeInfo.thumbnailUrl,
                     width: 60.w,
                     height: 60.h,
+
                     fit: BoxFit.cover,
                     alignment: Alignment.center,
                     //오류 발생 시 기본 파일 보이도록
                     errorBuilder: (context, error, stackTrace) {
                       return Image.asset(
                         "assets/imgs/default_img.jpg",
-                        width: double.infinity,
+                        width: 60.w,
                         height: 60.h,
                         fit: BoxFit.cover,
                         alignment: Alignment.center,
@@ -475,6 +485,7 @@ class EpisodeListItem extends StatelessWidget {
 }
 
 ///사용자로부터 값 입력 받을 수 있고 확인을 누르면 Action이 수행, 사용자가 임의로 취소 가능한 알림창
+/// 원하는 음악 분위기 프롬프트 입력 용
 void _showAlertWithTextFieldAndActionAndCancel({
   required Content contentInfo,
   required ContentEpisode episodeInfo,
@@ -972,6 +983,508 @@ void _showAlertForAddEpisode({
 
                                     style: AppTypography.mainCaption_1,
                                   ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+      );
+    },
+  );
+}
+
+void _showAlertForAddWebtoonEpisode({
+  required String DialogTtitle,
+  required String enterMsg,
+  required String cancelMsg,
+  required Content contentInfo,
+}) {
+  final TextEditingController _titleController = TextEditingController();
+
+  //사용자가 선택한 파일 저장 변수(앱용)
+  File? selectedThumbnailFile;
+  //사용자가 선택한 파일 저장 변수(웹용)
+  Uint8List? selectedThumbnailFileInWeb;
+
+  //사용자가 선택한 파일의 파일명
+  String? selectedThumbnailFileName;
+
+  List<File> selectedFiles = [];
+  List<Uint8List> selectedFilesInWeb = [];
+  List<String> selectedFileNames = [];
+  final _scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
+
+  showDialog(
+    context: AppRouter.navigatorKey.currentContext!,
+    builder: (BuildContext context) {
+      return StatefulBuilder(
+        builder: (context, setState) {
+          return ScaffoldMessenger(
+            key: _scaffoldMessengerKey,
+            child: Scaffold(
+              backgroundColor: Colors.transparent,
+              body: AlertDialog(
+                title: Text(
+                  DialogTtitle,
+                  style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
+                ),
+                backgroundColor: AppColors.dialogBackground,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15.0),
+                ),
+                contentPadding: const EdgeInsets.all(20.0),
+                content: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxHeight: MediaQuery.of(context).size.height * 0.7,
+                  ),
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 6.w),
+                    width: 320.w,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      spacing: 10,
+                      children: [
+                        Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text("에피소드 제목", softWrap: true),
+
+                            SizedBox(height: 5.h),
+                            Flexible(
+                              //width: 170.w,
+                              fit: FlexFit.loose,
+                              child: TextField(
+                                style: TextStyle(fontSize: 14),
+                                controller: _titleController,
+                                cursorHeight: 16,
+                                textAlignVertical: TextAlignVertical.center,
+                                decoration: InputDecoration(
+                                  hoverColor: Colors.transparent,
+                                  filled: true,
+                                  fillColor: AppColors.dialogTextField,
+                                  border: InputBorder.none,
+                                  enabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide.none,
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderSide: BorderSide.none,
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  isDense: true,
+                                  contentPadding: EdgeInsets.symmetric(
+                                    vertical: 10,
+                                    horizontal: 10,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text("썸네일 업로드", softWrap: true),
+
+                            SizedBox(height: 5.h),
+                            Flexible(
+                              //width: 170.w,
+                              fit: FlexFit.loose,
+                              child: Column(
+                                children: [
+                                  ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      shape: RoundedRectangleBorder(
+                                        //모서리를 둥글게
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      backgroundColor: AppColors.primary,
+
+                                      alignment: Alignment.centerLeft,
+                                      textStyle: const TextStyle(fontSize: 12),
+                                    ),
+                                    onPressed: () async {
+                                      FilePickerResult? result =
+                                          await FilePicker.platform.pickFiles(
+                                            type: FileType.custom,
+                                            allowedExtensions: [
+                                              'jpg',
+                                              'jpeg',
+                                              'png',
+                                              'txt',
+                                            ], // 원하는 확장자 추가
+                                            withData:
+                                                true, // 웹에서 bytes 사용을 위해 필요
+                                          );
+
+                                      if (result != null &&
+                                          result.files.single.bytes != null) {
+                                        setState(() {
+                                          selectedThumbnailFileName =
+                                              result.files.single.name;
+
+                                          if (kIsWeb) {
+                                            selectedThumbnailFileInWeb =
+                                                result.files.single.bytes!;
+                                          } else {
+                                            selectedThumbnailFile = File(
+                                              result.files.single.path!,
+                                            );
+                                          }
+                                        });
+                                      }
+                                    },
+                                    child: Align(
+                                      alignment: Alignment.center,
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Icon(
+                                            Icons.upload_file,
+                                            color: AppColors.white,
+                                          ),
+                                          Text(
+                                            "파일 업로드",
+                                            style: TextStyle(
+                                              color: AppColors.white,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  if ((selectedThumbnailFile != null ||
+                                          selectedThumbnailFileInWeb != null) &&
+                                      selectedThumbnailFileName != null)
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 8.0,
+                                        vertical: 8,
+                                      ),
+                                      child: Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Container(
+                                            height: 60.h,
+                                            width: 60.w,
+
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              border: Border.all(
+                                                color: Colors.grey,
+                                              ),
+                                            ),
+                                            //선택한 파일 미리보기(이미지면)
+                                            child:
+                                                selectedThumbnailFile != null
+                                                    ? (selectedThumbnailFileName!
+                                                            .endsWith('.txt')
+                                                        ? Center(
+                                                          child: Icon(
+                                                            Icons
+                                                                .insert_drive_file_outlined,
+                                                          ),
+                                                        )
+                                                        : ClipRRect(
+                                                          borderRadius:
+                                                              BorderRadius.circular(
+                                                                10,
+                                                              ),
+                                                          child: Image.file(
+                                                            selectedThumbnailFile!,
+                                                            fit: BoxFit.cover,
+                                                            alignment:
+                                                                Alignment
+                                                                    .center,
+                                                          ),
+                                                        ))
+                                                    : (selectedThumbnailFileName!
+                                                            .endsWith('.txt')
+                                                        ? Center(
+                                                          child: Icon(
+                                                            Icons
+                                                                .insert_drive_file_outlined,
+                                                          ),
+                                                        )
+                                                        : ClipRRect(
+                                                          borderRadius:
+                                                              BorderRadius.circular(
+                                                                10,
+                                                              ),
+                                                          child: Image.memory(
+                                                            selectedThumbnailFileInWeb!,
+                                                            fit: BoxFit.cover,
+                                                            alignment:
+                                                                Alignment
+                                                                    .center,
+                                                          ),
+                                                        )),
+                                          ),
+                                          SizedBox(width: 5.w),
+                                          Flexible(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  "파일명",
+                                                  style: TextStyle(
+                                                    fontSize: 10,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                                Text(
+                                                  selectedThumbnailFileName ??
+                                                      "",
+                                                  //softWrap: true,
+                                                  style: TextStyle(
+                                                    fontSize: 10,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text("에피소드 이미지 업로드"),
+                            ),
+
+                            SizedBox(height: 5.h),
+
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                alignment: Alignment.center,
+                                textStyle: const TextStyle(fontSize: 12),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                backgroundColor: AppColors.primary,
+                              ),
+
+                              onPressed: () async {
+                                FilePickerResult? result = await FilePicker
+                                    .platform
+                                    .pickFiles(
+                                      allowMultiple: true,
+                                      type: FileType.custom,
+                                      allowedExtensions: ['jpg', 'jpeg', 'png'],
+                                      withData: true,
+                                    );
+
+                                if (result != null) {
+                                  setState(() {
+                                    selectedFiles.clear();
+                                    selectedFilesInWeb.clear();
+                                    selectedFileNames.clear();
+
+                                    for (var file in result.files) {
+                                      selectedFileNames.add(file.name);
+
+                                      if (kIsWeb) {
+                                        if (file.bytes != null) {
+                                          selectedFilesInWeb.add(file.bytes!);
+                                        }
+                                      } else {
+                                        if (file.path != null) {
+                                          selectedFiles.add(File(file.path!));
+                                        }
+                                      }
+                                    }
+                                  });
+                                }
+                              },
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Icons.upload_file,
+                                    color: AppColors.white,
+                                  ),
+                                  SizedBox(width: 8),
+                                  Text(
+                                    "이미지 여러 개 업로드",
+                                    style: TextStyle(color: AppColors.white),
+                                  ),
+                                ],
+                              ),
+                            ),
+
+                            SizedBox(height: 10.h),
+
+                            if ((kIsWeb
+                                ? selectedFilesInWeb.isNotEmpty
+                                : selectedFiles.isNotEmpty))
+                              SizedBox(
+                                height: 120.h,
+                                child: ListView.separated(
+                                  scrollDirection: Axis.horizontal,
+                                  itemCount: selectedFileNames.length,
+                                  separatorBuilder:
+                                      (_, __) => SizedBox(width: 10.w),
+                                  itemBuilder: (context, index) {
+                                    final fileName = selectedFileNames[index];
+
+                                    Widget imageWidget;
+                                    if (kIsWeb) {
+                                      imageWidget = ClipRRect(
+                                        borderRadius: BorderRadius.circular(10),
+                                        child: Image.memory(
+                                          selectedFilesInWeb[index],
+                                          width: 100.w,
+                                          height: 100.h,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      );
+                                    } else {
+                                      imageWidget = ClipRRect(
+                                        borderRadius: BorderRadius.circular(10),
+                                        child: Image.file(
+                                          selectedFiles[index],
+                                          width: 100.w,
+                                          height: 100.h,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      );
+                                    }
+                                    //파일명 정보
+                                    return Column(
+                                      children: [
+                                        imageWidget,
+                                        SizedBox(height: 5.h),
+                                        SizedBox(
+                                          width: 100.w,
+                                          child: Text(
+                                            fileName,
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(fontSize: 10),
+                                          ),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                ),
+                              ),
+                          ],
+                        ),
+
+                        SizedBox(height: 10.h),
+                        //구분선
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Container(
+                                height: 0.5,
+                                color: AppColors.darkGrey,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 10.h),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: TextButton(
+                                onPressed: () async {
+                                  if (_titleController.text.isEmpty ||
+                                      selectedFileNames.isEmpty) {
+                                    _scaffoldMessengerKey.currentState
+                                        ?.showSnackBar(
+                                          SnackBar(
+                                            content: Text("입력 안 된 값이 있습니다"),
+                                          ),
+                                        );
+                                    return;
+                                  }
+
+                                  final episodeNotifier =
+                                      ProviderScope.containerOf(
+                                        context,
+                                        listen: false,
+                                      ).read(EpisodeProvider.notifier);
+
+                                  ShowDialogHelper.showLoadingWithMessage(
+                                    message: "에피소드를 추가중입니다.",
+                                  );
+                                  try {
+                                    if (!kIsWeb) {
+                                      await episodeNotifier
+                                          .addEpisodeInMobileForFiles(
+                                            contentType:
+                                                contentInfo.contentType,
+                                            contentCode: contentInfo.code,
+                                            epTitle: _titleController.text,
+                                            uploadDate: DateTime.now(),
+                                            episodeFiles: selectedFiles,
+                                          );
+                                    } else {
+                                      await episodeNotifier
+                                          .addEpisodeInWebForFiles(
+                                            contentType:
+                                                contentInfo.contentType,
+                                            contentCode: contentInfo.code,
+                                            epTitle: _titleController.text,
+                                            uploadDate: DateTime.now(),
+                                            episodeFilesInWeb:
+                                                selectedFilesInWeb,
+                                            episodeFileNamesInWeb:
+                                                selectedFileNames,
+                                          );
+                                    }
+                                    ShowDialogHelper.closeLoading();
+                                    AppRouter.pop();
+                                    ShowDialogHelper.showSnackBar(
+                                      content: "추가 완료!",
+                                      backgroundColor: AppColors.primary,
+                                    );
+                                  } catch (e) {
+                                    ShowDialogHelper.closeLoading();
+                                    _scaffoldMessengerKey.currentState
+                                        ?.showSnackBar(
+                                          SnackBar(content: Text("에러 발생!")),
+                                        );
+                                  }
+                                },
+                                child: Text(
+                                  "확인",
+                                  style: AppTypography.mainCaption_1.copyWith(
+                                    color: AppColors.primary,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              child: TextButton(
+                                onPressed: () => AppRouter.pop(),
+                                child: Text(
+                                  "취소",
+                                  style: AppTypography.mainCaption_1,
                                 ),
                               ),
                             ),

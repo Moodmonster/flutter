@@ -80,4 +80,74 @@ class ApiService {
 
     return await request.send();
   }
+
+  static Future<http.StreamedResponse> postRequestWithMultipleFiles({
+    required String endpoint,
+    required Map<String, dynamic> fields,
+    List<File>? files, // 📱 모바일용
+    List<Uint8List>? filesInWeb, // 💻 웹용
+    List<String>? fileNamesInWeb, // 💻 웹용 파일 이름
+  }) async {
+    var uri = Uri.parse(baseUrl + endpoint);
+    var request = http.MultipartRequest("POST", uri);
+
+    // 필드 설정
+    fields.forEach((key, value) {
+      request.fields[key] = value.toString();
+    });
+
+    // ✅ 모바일: File 리스트 처리
+    if (files != null) {
+      for (var file in files) {
+        final multipartFile = http.MultipartFile.fromBytes(
+          'images', // 서버에서 받는 이름이 'files' or 'files[]'
+          await file.readAsBytes(),
+          filename: file.path.split('/').last,
+        );
+        request.files.add(multipartFile);
+        final multipartFile2 = http.MultipartFile.fromBytes(
+          'images', // 서버에서 받는 이름이 'files' or 'files[]'
+          await file.readAsBytes(),
+          filename: file.path.split('/').last,
+        );
+        request.files.add(multipartFile2);
+        final multipartFile3 = http.MultipartFile.fromBytes(
+          'thumbnailImage', // 서버에서 받는 이름이 'files' or 'files[]'
+          await file.readAsBytes(),
+          filename: file.path.split('/').last,
+        );
+        request.files.add(multipartFile3);
+      }
+    }
+    // ✅ 웹: Uint8List + filename 처리
+    else if (filesInWeb != null && fileNamesInWeb != null) {
+      if (filesInWeb.length != fileNamesInWeb.length) {
+        throw Exception("웹 파일과 이름 리스트의 길이가 일치하지 않습니다.");
+      }
+
+      for (int i = 0; i < filesInWeb.length; i++) {
+        final multipartFile = http.MultipartFile.fromBytes(
+          'images',
+          filesInWeb[i],
+          filename: fileNamesInWeb[i],
+        );
+        request.files.add(multipartFile);
+        final multipartFile1 = http.MultipartFile.fromBytes(
+          'images',
+          filesInWeb[i],
+          filename: fileNamesInWeb[i],
+        );
+        request.files.add(multipartFile1);
+        final multipartFile2 = http.MultipartFile.fromBytes(
+          'thumbnailImage',
+          filesInWeb[i],
+          filename: fileNamesInWeb[i],
+        );
+        request.files.add(multipartFile2);
+      }
+    }
+
+    // 전송
+    return await request.send();
+  }
 }

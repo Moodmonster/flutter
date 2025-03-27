@@ -7,7 +7,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:moodmonster/config/routes/app_router.dart';
-import 'package:moodmonster/core/local/local_storage_base.dart';
 import 'package:moodmonster/core/local/local_storage_keys.dart';
 import 'package:moodmonster/helpers/constants/app_colors.dart';
 import 'package:moodmonster/helpers/constants/app_typography.dart';
@@ -206,7 +205,7 @@ void showAlertForAdd({
                   constraints: BoxConstraints(
                     maxHeight:
                         MediaQuery.of(context).size.height *
-                        0.7, // 화면 높이의 70%로 제한
+                        0.7, // 다이어로그 높이를 화면 높이의 70%로 제한
                   ),
                   child: Container(
                     padding: EdgeInsets.symmetric(horizontal: 6.w),
@@ -622,7 +621,7 @@ void showAlertForAdd({
                                             title: _titleController.text,
                                             desc: _descController.text,
                                             author: _authorController.text,
-                                            userId: prefs.getIdToken() ?? 'e',
+                                            userId: PrefsKeys.userId,
                                             prompt: _AIPromptController.text,
                                           );
                                           ShowDialogHelper.closeLoading();
@@ -662,7 +661,7 @@ void showAlertForAdd({
                                                   desc: _descController.text,
                                                   author:
                                                       _authorController.text,
-                                                  userId: prefs.getIdToken() ?? 'e',
+                                                  userId: PrefsKeys.userId,
                                                   fileData: selectedThumbImg!,
                                                 );
                                           } //  이미지가 웹에서 업로드한 데이터이고 파일명도 제대로 인식했으면
@@ -675,7 +674,7 @@ void showAlertForAdd({
                                                   desc: _descController.text,
                                                   author:
                                                       _authorController.text,
-                                                  userId: prefs.getIdToken() ?? 'e',
+                                                  userId: PrefsKeys.userId,
                                                   fileDataInWeb:
                                                       selectedThumbImgWeb!,
                                                   fileDataNameInWeb:

@@ -11,6 +11,7 @@ import 'package:moodmonster/helpers/constants/app_typography.dart';
 import 'package:moodmonster/models/content.model.dart';
 import 'package:moodmonster/providers/novel_provider.dart';
 import 'package:moodmonster/providers/webtoon_provider.dart';
+import 'package:shimmer/shimmer.dart';
 
 class ContentScreen extends ConsumerWidget {
   final MyContentType contentType;
@@ -252,39 +253,44 @@ class ContentCard extends ConsumerWidget {
       child: Column(
         spacing: 8,
         children: [
-          Container(
-            decoration: BoxDecoration(
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.5),
-                  spreadRadius: 0,
-                  blurRadius: 8.w,
-                  offset: Offset(2.w, 4.h),
-                ),
-              ],
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child:
-              // 웹툰 이미지
-              Image.network(
-                content.thumbnailUrl,
-                width: double.infinity,
-                height: 150.h,
-                fit: BoxFit.cover,
-                alignment: Alignment.center,
-                //오류 발생 시 기본 이미지 보이도록
-                errorBuilder: (context, error, stackTrace) {
-                  return Image.asset(
-                    "assets/imgs/default_img.jpg",
-                    width: double.infinity,
-                    height: 280.h,
-                    fit: BoxFit.cover,
-                    alignment: Alignment.center,
-                  );
-                },
-              ),
-            ),
+          // Container(
+          //   decoration: BoxDecoration(
+          //     boxShadow: [
+          //       //그림자
+          //       BoxShadow(
+          //         color: Colors.black.withValues(alpha: 0.5),
+          //         spreadRadius: 0,
+          //         blurRadius: 8.w,
+          //         offset: Offset(2.w, 4.h),
+          //       ),
+          //     ],
+          //   ),
+          //   child: ClipRRect(
+          //     borderRadius: BorderRadius.circular(12),
+          //     child:
+          //     // 웹툰 이미지
+          //     Image.network(
+          //       content.thumbnailUrl,
+          //       width: double.infinity,
+          //       height: 150.h,
+          //       fit: BoxFit.cover,
+          //       alignment: Alignment.center,
+          //       //오류 발생 시 기본 이미지 보이도록
+          //       errorBuilder: (context, error, stackTrace) {
+          //         return Image.asset(
+          //           "assets/imgs/default_img.jpg",
+          //           width: double.infinity,
+          //           height: 280.h,
+          //           fit: BoxFit.cover,
+          //           alignment: Alignment.center,
+          //         );
+          //       },
+          //     ),
+          //   ),
+          // ),
+          ThumbnailCardWithSkeleton(
+            imageUrl: content.thumbnailUrl,
+            borderRadius: 12,
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 3),
@@ -320,6 +326,126 @@ class ContentCard extends ConsumerWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+//썸네일 이미지(skeleton UI적용)
+class ThumbnailCardWithSkeleton extends StatefulWidget {
+  final String? imageUrl;
+  final double borderRadius;
+
+  const ThumbnailCardWithSkeleton({
+    Key? key,
+    required this.imageUrl,
+    this.borderRadius = 12,
+  }) : super(key: key);
+
+  @override
+  State<ThumbnailCardWithSkeleton> createState() =>
+      _ThumbnailCardWithSkeletonState();
+}
+
+class _ThumbnailCardWithSkeletonState extends State<ThumbnailCardWithSkeleton> {
+  bool _isLoaded = false;
+  bool _hasError = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(widget.borderRadius),
+      child: Stack(
+        children: [
+          Shimmer.fromColors(
+            baseColor: Colors.grey.shade300,
+            highlightColor: Colors.grey.shade100,
+            child: Container(
+              width: double.infinity,
+              height: 150.h,
+              decoration: BoxDecoration(
+                color: Colors.grey.shade300,
+                borderRadius: BorderRadius.circular(widget.borderRadius),
+              ),
+            ),
+          ),
+
+          // 썸네일 이미지
+          // 로딩 완료되면 보인다
+          ImageWidgetWithFallback(
+            imageUrl: widget.imageUrl,
+            onLoad: () {
+              if (!_isLoaded && mounted) {
+                setState(() {
+                  _isLoaded = true;
+                });
+              }
+            },
+            onError: () {
+              if (!_hasError && mounted) {
+                setState(() {
+                  _hasError = true;
+                });
+              }
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+//썸네일 이미지 로딩
+class ImageWidgetWithFallback extends StatelessWidget {
+  final String? imageUrl;
+  final VoidCallback onLoad;
+  final VoidCallback onError;
+
+  const ImageWidgetWithFallback({
+    Key? key,
+    required this.imageUrl,
+    required this.onLoad,
+    required this.onError,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    if (imageUrl == null) {
+      return Image.asset(
+        "assets/imgs/default_img.jpg",
+        width: double.infinity,
+        height: 150.h,
+        fit: BoxFit.cover,
+        alignment: Alignment.center,
+      );
+    }
+
+    return Image.network(
+      imageUrl!,
+      width: double.infinity,
+      height: 150.h,
+      fit: BoxFit.cover,
+      alignment: Alignment.center,
+      loadingBuilder: (context, child, loadingProgress) {
+        if (loadingProgress == null) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (loadingProgress == null) {
+              onLoad();
+            }
+          });
+          return child;
+        }
+        return const SizedBox(); // 임시 비움
+      },
+      errorBuilder: (context, error, stackTrace) {
+        WidgetsBinding.instance.addPostFrameCallback((_) => onError());
+        return Image.asset(
+          "assets/imgs/default_img.jpg",
+          width: double.infinity,
+          height: 150.h,
+          fit: BoxFit.cover,
+          alignment: Alignment.center,
+        );
+      },
     );
   }
 }

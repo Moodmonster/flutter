@@ -7,7 +7,7 @@ part of 'novel_paragraph.viewmodel.dart';
 // **************************************************************************
 
 String _$novelParagraphViewModelControllerHash() =>
-    r'811474f0f239f99a5d68fa1b1d620f9b3108d05c';
+    r'889855d39ae704ad8a3fa74f92efa85c26d88290';
 
 /// See also [NovelParagraphViewModelController].
 @ProviderFor(NovelParagraphViewModelController)

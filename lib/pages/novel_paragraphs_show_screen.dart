@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:inview_notifier_list/inview_notifier_list.dart';
-import 'package:just_audio/just_audio.dart';
 import 'package:moodmonster/config/routes/app_router.dart';
+import 'package:moodmonster/config/routes/routes.dart';
 import 'package:moodmonster/feature/error/data_null_screen.dart';
 import 'package:moodmonster/helpers/constants/app_colors.dart';
 import 'package:moodmonster/models/content.model.dart';
 import 'package:moodmonster/models/content_episode.model.dart';
 import 'package:moodmonster/models/novel_paragraph.model.dart';
+import 'package:moodmonster/providers/audio.viewmodel.dart';
 import 'package:moodmonster/providers/novel_paragraph.viewmodel.dart';
 import 'package:moodmonster/providers/novel_paragraph_provider.dart';
 
@@ -49,7 +50,10 @@ class _NovelParagraphsShowScreenState
       // 해당 에피소드의 단락 데이터 백엔드로부터 가져오기 실행
       ref
           .read(NovelParagraphProvider.notifier)
-          .loadParagraphs(code: episodeInfo!.code, prompt: prompt);
+          .loadParagraphs(
+            code: episodeInfo!.code == "%blank" ? episodeInfo!.contentCode : episodeInfo!.code, 
+            prompt: prompt
+          );
     }
 
     _initialized = true;
@@ -80,7 +84,14 @@ class _NovelParagraphsShowScreenState
                 title: episodeInfo?.epTitle ?? "예시",
                 isMuted: novelPageView.isMuted,
                 muteTap: () => novelController.handleMute(),
-                mp3ScreenTap: (){}
+                mp3ScreenTap: (){
+                  ref.read(audioControllerProvider.notifier).initScreen(
+                    title: episodeInfo?.epTitle ?? "예시", 
+                    coverImg: contentInfo?.thumbnailUrl ?? "", 
+                    ttsUrl: ''
+                  );
+                  AppRouter.pushNamed(Routes.novelTTS);
+                }
               ),
               Expanded(
                 //소설 단락들 담는 프로바이더의 상태에 따라 다른 내용 보이도록
@@ -123,19 +134,25 @@ Widget _buildParagraphsScreenUI(
     slivers: [
       // 표지 사진
       SliverToBoxAdapter(
-        child: Image.network(
-          contentInfo.thumbnailUrl,
-          width: double.infinity,
-          fit: BoxFit.fitWidth,
-          alignment: Alignment.center,
-          errorBuilder: (context, error, stackTrace) {
-            return Image.asset(
-              "assets/imgs/default_img.jpg",
+        child: Hero(
+          tag: contentInfo.thumbnailUrl,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(0),
+            child: Image.network(
+              contentInfo.thumbnailUrl,
               width: double.infinity,
               fit: BoxFit.fitWidth,
               alignment: Alignment.center,
-            );
-          },
+              errorBuilder: (context, error, stackTrace) {
+                return Image.asset(
+                  "assets/imgs/default_img.jpg",
+                  width: double.infinity,
+                  fit: BoxFit.fitWidth,
+                  alignment: Alignment.center,
+                );
+              },
+            ),
+          ),
         ),
       ),
 
@@ -256,7 +273,7 @@ Container customNovelAppBar({
             ),
             SizedBox(width: 7.w),
             //TTS로 읽어주기 기능 버튼
-            IconButton(onPressed: () {}, icon: Icon(Icons.record_voice_over)),
+            IconButton(onPressed: mp3ScreenTap, icon: Icon(Icons.record_voice_over)),
           ],
         ),
       ],

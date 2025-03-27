@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:moodmonster/pages/episode_list_screen.page_view.dart';
 import 'package:moodmonster/pages/main_screen.page_view.dart';
 import 'package:moodmonster/pages/novel_paragraphs_show_screen.dart';
+import 'package:moodmonster/pages/tts/tts_screen.page.dart';
 
 import '../../feature/auth/login_screen_view.dart';
 import '../../feature/error/page_not_found_view.dart';
@@ -19,6 +20,7 @@ class Routes {
   static const String homeScreenRoute = '/home';
   static const String episodeListScreen = '/episodes';
   static const String novelParagraphsShowScreen = '/episodes/paragraphs';
+  static const String novelTTS = '/episodes/paragraphs/tts';
 
   static final Map<String, Widget Function()> _routesMap = {
     //initialRoute: () => const MoodMonsterMainScreen(),
@@ -28,6 +30,7 @@ class Routes {
     homeScreenRoute: () => const HomeScreen(),
     episodeListScreen: () => const EpisodeListScreen(),
     novelParagraphsShowScreen: () => const NovelParagraphsShowScreen(),
+    novelTTS: () => const TTSPage()
   };
 
   static Widget Function() getRoute(String? routeName) {

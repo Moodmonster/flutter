@@ -6,7 +6,8 @@ part 'webtoon_paragraph.model.g.dart';
 @freezed
 abstract class WebtoonParagraph with _$WebtoonParagraph {
   factory WebtoonParagraph({
-    required List<String> imgList,
+    required int displayOrder,
+    required String image_url,
     required String music_url,
   }) = _WebtoonParagraph;
 

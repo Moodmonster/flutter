@@ -8,13 +8,14 @@ part of 'webtoon_paragraph.model.dart';
 
 _WebtoonParagraph _$WebtoonParagraphFromJson(Map<String, dynamic> json) =>
     _WebtoonParagraph(
-      imgList:
-          (json['imgList'] as List<dynamic>).map((e) => e as String).toList(),
+      displayOrder: (json['displayOrder'] as num).toInt(),
+      image_url: json['images'][0] as String,
       music_url: json['music_url'] as String,
     );
 
 Map<String, dynamic> _$WebtoonParagraphToJson(_WebtoonParagraph instance) =>
     <String, dynamic>{
-      'imgList': instance.imgList,
+      'displayOrder': instance.displayOrder,
+      'image_url': instance.image_url,
       'music_url': instance.music_url,
     };

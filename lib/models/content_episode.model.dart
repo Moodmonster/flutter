@@ -7,28 +7,14 @@ part 'content_episode.model.g.dart';
 @freezed
 abstract class ContentEpisode with _$ContentEpisode {
   factory ContentEpisode({
-    required String code,
+    @JsonKey(name: 'episodeCode') @Default("") String code,
     required String contentCode, //해당 에피소드가 속해있는 웹툰의 고유 코드
     required String epTitle,
     required DateTime uploadDate, //업로드된 날짜
-    required String thumbnailUrl,
+    @Default("") String thumbnailUrl,
+    @Default("") String ttsUrl,
   }) = _ContentEpisode;
 
   factory ContentEpisode.fromJson(Map<String, dynamic> json) =>
       _$ContentEpisodeFromJson(json);
 }
-
-// class ContentEpisode {
-//   final String code;
-//   final String contentCode; //해당 에피소드가 속해있는 콘텐츠의 고유 코드
-//   final String epTitle;
-//   final DateTime uploadDate; //업로드된 날짜
-//   final String thumbnailUrl;
-//   ContentEpisode({
-//     required this.code,
-//     required this.contentCode,
-//     required this.epTitle,
-//     required this.uploadDate,
-//     required this.thumbnailUrl,
-//   });
-// }

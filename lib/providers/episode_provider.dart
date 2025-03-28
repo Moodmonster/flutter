@@ -60,12 +60,13 @@ class EpisodeNotifier extends StateNotifier<AsyncValue<List<ContentEpisode>>> {
     }
   }
 
-  // 에피소드 추가 파일 여러개(모바일에서)
+  // 에피소드 추가 파일 여러개 (모바일)
   Future<void> addEpisodeInMobileForFiles({
     required MyContentType contentType,
     required String contentCode,
     required String epTitle,
     required DateTime uploadDate,
+    required File? thumbnailFile, //  썸네일 추가
     required List<File> episodeFiles,
   }) async {
     try {
@@ -74,6 +75,7 @@ class EpisodeNotifier extends StateNotifier<AsyncValue<List<ContentEpisode>>> {
         contentCode: contentCode,
         epTitle: epTitle,
         uploadDate: uploadDate,
+        thumbnailFile: thumbnailFile, //  전달
         episodeFiles: episodeFiles,
       );
       // 에피소드 목록 새로 로드
@@ -120,6 +122,8 @@ class EpisodeNotifier extends StateNotifier<AsyncValue<List<ContentEpisode>>> {
     required String contentCode,
     required String epTitle,
     required DateTime uploadDate,
+    required Uint8List? thumbnailFileInWeb, //  썸네일 추가
+    required String? thumbnailFileNameInWeb, //  썸네일 파일명 추가
     required List<Uint8List> episodeFilesInWeb,
     required List<String> episodeFileNamesInWeb,
   }) async {
@@ -129,6 +133,8 @@ class EpisodeNotifier extends StateNotifier<AsyncValue<List<ContentEpisode>>> {
         contentCode: contentCode,
         epTitle: epTitle,
         uploadDate: uploadDate,
+        thumbnailFileInWeb: thumbnailFileInWeb, //  전달
+        thumbnailFileNameInWeb: thumbnailFileNameInWeb, //  전달
         episodeFilesInWeb: episodeFilesInWeb,
         episodeFileNamesInWeb: episodeFileNamesInWeb,
       );

@@ -38,7 +38,8 @@ class AppColors {
 
   /// primary
   //static const Color primary = Color(0xFFF7E172);
-  static const Color primary = Color.fromARGB(255, 48, 61, 130);
+  // static const Color primary = Color.fromARGB(255, 48, 61, 130);
+  static const Color primary = Color.fromARGB(255, 198, 210, 206);
   static const Color lightPrimary = Color.fromARGB(255, 208, 216, 246);
 
   /// light primary

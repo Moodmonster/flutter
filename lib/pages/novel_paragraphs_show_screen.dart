@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:just_audio/just_audio.dart';
+import 'package:inview_notifier_list/inview_notifier_list.dart';
 import 'package:moodmonster/config/routes/app_router.dart';
+import 'package:moodmonster/config/routes/routes.dart';
 import 'package:moodmonster/feature/error/data_null_screen.dart';
 import 'package:moodmonster/helpers/constants/app_colors.dart';
 import 'package:moodmonster/models/content.model.dart';
 import 'package:moodmonster/models/content_episode.model.dart';
 import 'package:moodmonster/models/novel_paragraph.model.dart';
+import 'package:moodmonster/providers/audio.viewmodel.dart';
+import 'package:moodmonster/providers/novel_paragraph.viewmodel.dart';
 import 'package:moodmonster/providers/novel_paragraph_provider.dart';
 
 class NovelParagraphsShowScreen extends ConsumerStatefulWidget {
@@ -47,7 +50,13 @@ class _NovelParagraphsShowScreenState
       // 해당 에피소드의 단락 데이터 백엔드로부터 가져오기 실행
       ref
           .read(NovelParagraphProvider.notifier)
-          .loadParagraphs(code: episodeInfo!.code, prompt: prompt);
+          .loadParagraphs(
+            code:
+                episodeInfo!.code == "%blank"
+                    ? episodeInfo!.contentCode
+                    : episodeInfo!.code,
+            prompt: prompt,
+          );
     }
 
     _initialized = true;
@@ -56,6 +65,10 @@ class _NovelParagraphsShowScreenState
   @override
   Widget build(BuildContext context) {
     final novelParagraphsAsync = ref.watch(NovelParagraphProvider);
+    final novelPageView = ref.watch(novelParagraphViewModelControllerProvider);
+    final novelController = ref.read(
+      novelParagraphViewModelControllerProvider.notifier,
+    );
 
     //episodeInfo나 contentInfo가 없으면 데이터 없다는 내용의 화면 띄운다
     if (episodeInfo == null || contentInfo == null) {
@@ -63,119 +76,51 @@ class _NovelParagraphsShowScreenState
     }
 
     //episodeInfo,contentInfo 둘다 있으면
-    return Scaffold(
-      body: SafeArea(
-        child: Column(
-          children: [
-            _MyAppBar(episodeInfo: episodeInfo!),
-            Expanded(
-              //소설 단락들 담는 프로바이더의 상태에 따라 다른 내용 보이도록
-              child: novelParagraphsAsync.when(
-                //데이터 정상적으로 있는 상태라면
-                data: (paragraphs) {
-                  AudioPlayer _audioPlayer = AudioPlayer();
-                  return _buildParagraphsScreenUI(
-                    contentInfo!,
-                    episodeInfo!,
-                    paragraphs,
-                    _audioPlayer,
-                  );
-                },
-                // 로딩중이라면
-                loading: () => Center(child: CircularProgressIndicator()),
-                // 에러난 상태면
-                error: (e, _) => Center(child: Text('오류 발생: $e')),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-//내가 만든 앱바
-class _MyAppBar extends StatefulWidget {
-  final ContentEpisode episodeInfo;
-  _MyAppBar({required this.episodeInfo});
-
-  @override
-  State<_MyAppBar> createState() => __MyAppBarState();
-}
-
-class __MyAppBarState extends State<_MyAppBar> {
-  //현재 음소거 여부 : 처음에는 false
-  static bool _isMuted = false;
-  //기존 음량크기 정보(일단 1로 설정. 음소거 누르면 업데이트되어 재생중이던 음량 정보로 업데이트됨)
-  double _originalVolume = 1;
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 55.h,
-      color: AppColors.background,
-      padding: EdgeInsets.symmetric(horizontal: 8.w),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          //뒤로 가기 버튼
-          IconButton(
-            onPressed: () {
-              AppRouter.pop();
-            },
-            icon: Icon(Icons.arrow_back_ios_new),
-          ),
-          //에피소드 제목
-          Expanded(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 8.w),
-              child: Text(
-                widget.episodeInfo.epTitle ?? "예시",
-                style: TextStyle(fontSize: 17),
-              ),
-            ),
-          ),
-          //우측의 음소거, tts기능 버튼
-          Row(
+    return PopScope(
+      canPop: true,
+      onPopInvokedWithResult: (didPop, result) {
+        novelController.audioDispose();
+      },
+      child: Scaffold(
+        body: SafeArea(
+          child: Column(
             children: [
-              //배경음악 음소거 끄고 키는 버튼
-              IconButton(
-                onPressed: () async {
-                  if (_isMuted) {
-                    //음소거 상태였는데  버튼 누른거면=> 소리키기
-                    //재생중이던 플레이어가 있다면 소리 다시 켜야됨
-                    if (_ParagraphItemState._currentlyPlaying != null) {
-                      //이전에 재생중이던 음량으로 소리킨다
-                      await _ParagraphItemState._currentlyPlaying!.setVolume(
-                        _originalVolume,
+              customNovelAppBar(
+                title: episodeInfo?.epTitle ?? "예시",
+                isMuted: novelPageView.isMuted,
+                muteTap: () => novelController.handleMute(),
+                mp3ScreenTap: () {
+                  ref
+                      .read(audioControllerProvider.notifier)
+                      .initScreen(
+                        title: episodeInfo?.epTitle ?? "예시",
+                        coverImg: contentInfo?.thumbnailUrl ?? "",
+                        ttsUrl: '',
                       );
-                    }
-                  } else {
-                    //음소거 상태 아니였는데  버튼 누른거면=>음소거
-                    //재생중이던 플레이어가 있다면 음소거
-                    if (_ParagraphItemState._currentlyPlaying != null) {
-                      //기존에 재생중이던 음량 정보 저장
-                      _originalVolume =
-                          _ParagraphItemState._currentlyPlaying?.volume ?? 1;
-                      print("_originalVolume: ${_originalVolume}");
-                      //음소거 실행
-                      await _ParagraphItemState._currentlyPlaying!.setVolume(0);
-                    }
-                  }
-                  //화면 업데이트
-                  setState(() {
-                    //음소거 여부 반전시킴
-                    _isMuted = !_isMuted;
-                  });
+                  AppRouter.pushNamed(Routes.novelTTS);
                 },
-                icon: _isMuted ? Icon(Icons.music_note) : Icon(Icons.music_off),
               ),
-              SizedBox(width: 7.w),
-              //TTS로 읽어주기 기능 버튼
-              IconButton(onPressed: () {}, icon: Icon(Icons.record_voice_over)),
+              Expanded(
+                //소설 단락들 담는 프로바이더의 상태에 따라 다른 내용 보이도록
+                child: novelParagraphsAsync.when(
+                  //데이터 정상적으로 있는 상태라면
+                  data: (paragraphs) {
+                    return _buildParagraphsScreenUI(
+                      contentInfo!,
+                      episodeInfo!,
+                      paragraphs,
+                      novelController: novelController,
+                    );
+                  },
+                  // 로딩중이라면
+                  loading: () => Center(child: CircularProgressIndicator()),
+                  // 에러난 상태면
+                  error: (e, _) => Center(child: Text('오류 발생: $e')),
+                ),
+              ),
             ],
           ),
-        ],
+        ),
       ),
     );
   }
@@ -185,44 +130,54 @@ class __MyAppBarState extends State<_MyAppBar> {
 Widget _buildParagraphsScreenUI(
   Content contentInfo,
   ContentEpisode episodeInfo,
-  List<NovelParagraph> paragraphs,
-  AudioPlayer _audioPlayer,
-) {
-  return SingleChildScrollView(
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        //표지 사진
-        Image.network(
-          contentInfo.thumbnailUrl,
-          width: double.infinity,
-          fit: BoxFit.fitWidth,
-          alignment: Alignment.center,
-          //오류 발생 시 기본 파일 보이도록
-          errorBuilder: (context, error, stackTrace) {
-            return Image.asset(
-              "assets/imgs/default_img.jpg",
+  List<NovelParagraph> paragraphs, {
+  required NovelParagraphViewModelController novelController,
+}) {
+  return InViewNotifierCustomScrollView(
+    isInViewPortCondition: (deltaTop, deltaBottom, viewPortDimension) {
+      return deltaTop < (0.4 * viewPortDimension) &&
+          deltaBottom > (0.4 * viewPortDimension);
+    },
+    slivers: [
+      // 표지 사진
+      SliverToBoxAdapter(
+        child: Hero(
+          tag: contentInfo.thumbnailUrl,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(0),
+            child: Image.network(
+              contentInfo.thumbnailUrl,
               width: double.infinity,
               fit: BoxFit.fitWidth,
               alignment: Alignment.center,
-            );
-          },
+              errorBuilder: (context, error, stackTrace) {
+                return Image.asset(
+                  "assets/imgs/default_img.jpg",
+                  width: double.infinity,
+                  fit: BoxFit.fitWidth,
+                  alignment: Alignment.center,
+                );
+              },
+            ),
+          ),
         ),
-        //에피소드 제목 부분
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 24.h),
+      ),
+
+      // 에피소드 제목 부분
+      SliverPadding(
+        padding: EdgeInsets.only(left: 15.w, right: 15.w, top: 24.h),
+        sliver: SliverToBoxAdapter(
           child: IntrinsicHeight(
             child: Row(
               children: [
-                //왼쪽 막대
+                // 왼쪽 막대
                 Container(
                   margin: EdgeInsets.only(right: 14.w),
-                  width: 3.w, // 막대 두께
-                  //height: 30.h, // 막대 길이
-                  color: AppColors.mainTextColor, // 색상
+                  width: 3.w,
+                  color: AppColors.mainTextColor,
                 ),
                 Expanded(
-                  //제목출력
+                  // 제목 출력
                   child: Text(
                     episodeInfo.epTitle,
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
@@ -233,119 +188,93 @@ Widget _buildParagraphsScreenUI(
             ),
           ),
         ),
+      ),
 
-        //단락들 쭉 나오게 하는 listView
-        ListView.builder(
-          physics: NeverScrollableScrollPhysics(), // 중복 스크롤 방지
-          shrinkWrap: true, // Column 내에서 높이 문제 해결
-          padding: EdgeInsets.symmetric(horizontal: 20.w),
-          itemCount: paragraphs.length,
-          itemBuilder: (context, index) {
-            return ParagraphItem(paragraph: paragraphs[index]);
-          },
-        ),
+      // 단락들 리스트 (InViewNotifier 적용)
+      SliverList(
+        delegate: SliverChildBuilderDelegate((context, index) {
+          return InViewNotifierWidget(
+            id: '$index',
+            builder: (context, isInView, _) {
+              return Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20.w),
+                child: paragraphItem(
+                  isInView: isInView,
+                  novelController: novelController,
+                  paragraph: paragraphs[index],
+                ),
+              );
+            },
+          );
+        }, childCount: paragraphs.length),
+      ),
 
-        Container(height: 300.h),
-      ],
-    ),
+      // 추가 여백
+      SliverToBoxAdapter(child: SizedBox(height: 300.h)),
+    ],
   );
 }
 
-//단락 하나하나에 해당하는 위젯
-class ParagraphItem extends StatefulWidget {
-  final NovelParagraph paragraph;
-
-  const ParagraphItem({super.key, required this.paragraph});
-
-  @override
-  State<ParagraphItem> createState() => _ParagraphItemState();
+Column paragraphItem({
+  required bool isInView,
+  required NovelParagraphViewModelController novelController,
+  required NovelParagraph paragraph,
+}) {
+  novelController.playAudio(paragraph.music_url);
+  return Column(
+    children: [
+      SizedBox(height: 14.h),
+      //단락 내용(txt)출력
+      Text(paragraph.text, style: TextStyle(fontSize: 22, height: 1.8)),
+    ],
+  );
 }
 
-class _ParagraphItemState extends State<ParagraphItem> {
-  // 내 오디오 플레이어
-  late final AudioPlayer _player;
-
-  // static변수로 현재 재생중인 플레이어 정보 담는다
-  // 모든 ParagraphItem 인스턴스에서 동일한 _currentlyPlaying변수에 접근 가능(static이기 때문)
-  static AudioPlayer? _currentlyPlaying;
-
-  @override
-  void initState() {
-    super.initState();
-    _player = AudioPlayer();
-  }
-
-  @override
-  void dispose() {
-    //플레이어 해제 -> 음악 자동 중지 되긴 하는데... 화면에서 사라져도 displose되지 않는 itemWidget들이 있음
-    _player.dispose();
-    print("player dispose :${widget.paragraph.text.substring(0, 4)}");
-    super.dispose();
-  }
-
-  //노래 재생시키는 함수
-  Future<void> _playAudio() async {
-    // 기존에 재생 중인 플레이어가 있고 재생중인게 내 플레이어가 아니라면 멈춤
-    if (_currentlyPlaying != null && _currentlyPlaying != _player) {
-      await _currentlyPlaying!.stop();
-    }
-
-    try {
-      //url과 연결된 음악 재생 시도
-      await _player.setUrl(widget.paragraph.music_url);
-    } catch (e) {
-      //url음악은 실패했다면
-      print("Azure URL로 노래 재생 실패: $e");
-      try {
-        //default mp3재생되도록
-        await _player.setAsset('assets/audio/default.mp3');
-      } catch (err) {
-        print("기본 오디오도 실패: $err");
-        //아무노래도 재생하지 않는다
-        return;
-      }
-    }
-
-    //현재 재생중인 플레이어 정보(static)를 내 플레이어로 설정
-    _currentlyPlaying = _player;
-    //만약 현재 음소거 상태라면 소리 0으로 세팅
-    if (__MyAppBarState._isMuted) {
-      _player.setVolume(0);
-    }
-    //음악 재생
-    _player.play();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+Container customNovelAppBar({
+  required String title,
+  required bool isMuted,
+  required VoidCallback muteTap,
+  required VoidCallback mp3ScreenTap,
+}) {
+  return Container(
+    height: 55.h,
+    color: AppColors.background,
+    padding: EdgeInsets.symmetric(horizontal: 8.w),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
+        //뒤로 가기 버튼
+        IconButton(
+          onPressed: () {
+            AppRouter.pop();
+          },
+          icon: Icon(Icons.arrow_back_ios_new),
+        ),
+        //에피소드 제목
+        Expanded(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 8.w),
+            child: Text(title, style: TextStyle(fontSize: 17)),
+          ),
+        ),
+        //우측의 음소거, tts기능 버튼
         Row(
           children: [
-            //누르면 노래 재생 버튼
+            //배경음악 음소거 끄고 키는 버튼
             IconButton(
-              icon: Icon(Icons.play_circle_fill_outlined),
-              onPressed: _playAudio,
+              onPressed: muteTap,
+              icon: isMuted ? Icon(Icons.music_off) : Icon(Icons.music_note),
             ),
-            //음악 파일 이름
-            Expanded(
-              child: Text(
-                widget.paragraph.music_url,
-                overflow: TextOverflow.ellipsis,
-              ),
+            SizedBox(width: 7.w),
+            //TTS로 읽어주기 기능 버튼
+            IconButton(
+              onPressed: mp3ScreenTap,
+              icon: Icon(Icons.record_voice_over),
             ),
           ],
         ),
-        SizedBox(height: 8.h),
-        //단락 내용(txt)출력
-        Text(
-          widget.paragraph.text,
-          style: TextStyle(fontSize: 22, height: 1.8),
-        ),
-        //구분선
-        const Divider(),
       ],
-    );
-  }
+    ),
+  );
 }

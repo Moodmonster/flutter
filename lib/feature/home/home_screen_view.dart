@@ -140,15 +140,15 @@ class _HomeScreenState extends State<HomeScreen>
             return FloatingActionButton(
               onPressed: () {
                 showAlertForAdd(
-                  DialogTtitle: "콘텐츠 추가",
-                  enterMsg: "확인",
-                  cancelMsg: "취소",
+                  DialogTtitle: "Add Content",
+                  enterMsg: "Confirm",
+                  cancelMsg: "Cancel",
                   selectedTabContentType: tabContentType,
                 );
               },
               child: Icon(Icons.add, color: AppColors.background),
               elevation: 10,
-              backgroundColor: AppColors.mainTextColor,
+              backgroundColor: AppColors.primary,
               shape: CircleBorder(),
             );
           },
@@ -159,7 +159,7 @@ class _HomeScreenState extends State<HomeScreen>
 }
 
 ///콘텐츠, 목차 add할 때 사용할 모달창
-///사용자로부터 값 입력 받을 수 있고 확인을 누르면 Action이 수행, 사용자가 임의로 취소 가능한 알림창
+///사용자로부터 값 입력 받을 수 있고 Confirm을 누르면 Action이 수행, 사용자가 임의로 Cancel 가능한 알림창
 void showAlertForAdd({
   required String DialogTtitle,
   required String enterMsg,
@@ -175,7 +175,7 @@ void showAlertForAdd({
   //사용자가 선택한 이미지 저장 변수(웹용)
   Uint8List? selectedThumbImgWeb;
 
-  //사용자가 저장한 이미지의 파일명
+  //사용자가 저장한 이미지의 File Name
   String? thumbImgFileName;
   final ImagePicker picker = ImagePicker();
 
@@ -214,15 +214,13 @@ void showAlertForAdd({
                       mainAxisSize: MainAxisSize.min,
                       spacing: 10,
                       children: [
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          mainAxisSize: MainAxisSize.min,
                           children: [
-                            SizedBox(
-                              width: 40.w,
-                              child: Text("제목", softWrap: true),
-                            ),
-                            SizedBox(width: 20.w),
-                            Expanded(
+                            Text("Title", softWrap: true),
+                            SizedBox(height: 5.h),
+                            Flexible(
                               //width: 170.w,
                               child: TextField(
                                 style: TextStyle(fontSize: 14),
@@ -252,17 +250,51 @@ void showAlertForAdd({
                             ),
                           ],
                         ),
-                        Row(
+                        Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
                           children: [
-                            SizedBox(
-                              width: 40.w,
-                              child: Text("설명", softWrap: true),
+                            Text("Author", softWrap: true),
+                            SizedBox(height: 5.h),
+                            Flexible(
+                              //width: 170.w,
+                              child: TextField(
+                                style: TextStyle(fontSize: 14),
+                                controller: _authorController,
+                                cursorHeight: 16,
+                                textAlignVertical: TextAlignVertical.center,
+                                decoration: InputDecoration(
+                                  hoverColor: Colors.transparent,
+                                  filled: true,
+                                  fillColor: AppColors.dialogTextField,
+                                  border: InputBorder.none,
+                                  enabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide.none,
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderSide: BorderSide.none,
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  isDense: true,
+                                  contentPadding: EdgeInsets.symmetric(
+                                    vertical: 10,
+                                    horizontal: 10,
+                                  ),
+                                ),
+                              ),
                             ),
-                            SizedBox(width: 20.w),
-                            Expanded(
+                          ],
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text("Description", softWrap: true),
+                            SizedBox(height: 5.h),
+                            Flexible(
                               child: SizedBox(
-                                height: 100.h,
+                                height: 80.h,
                                 //width: 170.w,
                                 child: TextField(
                                   style: TextStyle(fontSize: 14),
@@ -295,55 +327,16 @@ void showAlertForAdd({
                             ),
                           ],
                         ),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(
-                              width: 40.w,
-                              child: Text("작가명", softWrap: true),
-                            ),
-                            SizedBox(width: 20.w),
-                            Expanded(
-                              //width: 170.w,
-                              child: TextField(
-                                style: TextStyle(fontSize: 14),
-                                controller: _authorController,
-                                cursorHeight: 16,
-                                textAlignVertical: TextAlignVertical.center,
-                                decoration: InputDecoration(
-                                  hoverColor: Colors.transparent,
-                                  filled: true,
-                                  fillColor: AppColors.dialogTextField,
-                                  border: InputBorder.none,
-                                  enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide.none,
-                                    borderRadius: BorderRadius.circular(6),
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide.none,
-                                    borderRadius: BorderRadius.circular(6),
-                                  ),
-                                  isDense: true,
-                                  contentPadding: EdgeInsets.symmetric(
-                                    vertical: 10,
-                                    horizontal: 10,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+
                         //소설에서 +버튼 눌렀으면 파일 업로드 말고 AI자동생성 프롬프트 입력란
                         selectedTabContentType == MyContentType.Webtoon
-                            ? Row(
+                            ? Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
                               children: [
-                                SizedBox(
-                                  width: 40.w,
-                                  child: Text("썸네일 이미지", softWrap: true),
-                                ),
-                                SizedBox(width: 20.w),
-                                Expanded(
+                                Text("Thumbnail", softWrap: true),
+                                SizedBox(height: 5.h),
+                                Flexible(
                                   //width: 170.w,
                                   child: Column(
                                     children: [
@@ -401,7 +394,7 @@ void showAlertForAdd({
                                                 color: AppColors.white,
                                               ),
                                               Text(
-                                                "이미지 업로드",
+                                                "Upload Image",
                                                 style: TextStyle(
                                                   color: AppColors.white,
                                                 ),
@@ -462,7 +455,7 @@ void showAlertForAdd({
                                                       CrossAxisAlignment.start,
                                                   children: [
                                                     Text(
-                                                      "파일명",
+                                                      "File Name",
                                                       style: TextStyle(
                                                         fontSize: 10,
                                                         fontWeight:
@@ -504,9 +497,9 @@ void showAlertForAdd({
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        Text("✨ 썸네일 AI 자동 생성"),
+                                        Text("✨ Generate Thumbnail with AI"),
                                         Text(
-                                          "원하는 이미지 분위기를 입력하세요",
+                                          "Enter image mood or style",
                                           style: TextStyle(
                                             fontSize: 10,
                                             color: AppColors.lightBlack,
@@ -554,6 +547,7 @@ void showAlertForAdd({
                               ),
                             ),
 
+                        SizedBox(height: 5.h),
                         //구분선
                         Row(
                           children: [
@@ -591,7 +585,7 @@ void showAlertForAdd({
                                           ?.showSnackBar(
                                             SnackBar(
                                               content: Text(
-                                                "입력 안 된 값이 있습니다",
+                                                "Some fields are missing",
                                                 style: TextStyle(
                                                   color:
                                                       AppColors.mainTextColor,
@@ -613,7 +607,7 @@ void showAlertForAdd({
 
                                         //로딩창 띄우기
                                         ShowDialogHelper.showLoadingWithMessage(
-                                          message: "콘텐츠를 추가중입니다.",
+                                          message: "Adding content....",
                                         );
 
                                         try {
@@ -627,8 +621,11 @@ void showAlertForAdd({
                                           ShowDialogHelper.closeLoading();
                                           AppRouter.pop();
                                           ShowDialogHelper.showSnackBar(
-                                            content: "추가 완료!",
+                                            content:
+                                                "Content added successfully!",
                                             backgroundColor: AppColors.primary,
+                                            durationSeconds: 6,
+                                            textColor: AppColors.white,
                                           );
                                         } catch (err) {
                                           ShowDialogHelper.closeLoading();
@@ -636,7 +633,9 @@ void showAlertForAdd({
                                           _scaffoldMessengerKey.currentState
                                               ?.showSnackBar(
                                                 SnackBar(
-                                                  content: Text("에러 발생"),
+                                                  content: Text(
+                                                    "An error occurred.",
+                                                  ),
                                                 ),
                                               );
                                         }
@@ -650,7 +649,7 @@ void showAlertForAdd({
                                             ).read(WebtoonProvider.notifier);
                                         //로딩창 띄우기
                                         ShowDialogHelper.showLoadingWithMessage(
-                                          message: "콘텐츠를 추가중입니다.",
+                                          message: "Adding content....",
                                         );
                                         try {
                                           if (selectedThumbImg != null) {
@@ -664,7 +663,7 @@ void showAlertForAdd({
                                                   userId: PrefsKeys.userId,
                                                   fileData: selectedThumbImg!,
                                                 );
-                                          } //  이미지가 웹에서 업로드한 데이터이고 파일명도 제대로 인식했으면
+                                          } //  이미지가 웹에서 업로드한 데이터이고 File Name도 제대로 인식했으면
                                           else if (selectedThumbImgWeb !=
                                                   null &&
                                               thumbImgFileName != null) {
@@ -685,7 +684,7 @@ void showAlertForAdd({
                                                 ?.showSnackBar(
                                                   SnackBar(
                                                     content: Text(
-                                                      "이미지 선택에 문제가 있습니다",
+                                                      "There was a problem selecting the image.",
                                                     ),
                                                   ),
                                                 );
@@ -695,8 +694,11 @@ void showAlertForAdd({
                                           ShowDialogHelper.closeLoading();
                                           AppRouter.pop();
                                           ShowDialogHelper.showSnackBar(
-                                            content: "추가 완료!",
+                                            content:
+                                                "Content added successfully!",
                                             backgroundColor: AppColors.primary,
+                                            durationSeconds: 6,
+                                            textColor: AppColors.white,
                                           );
                                         } catch (err) {
                                           //오류 발생시 스낵바 띄움
@@ -705,7 +707,9 @@ void showAlertForAdd({
                                           _scaffoldMessengerKey.currentState
                                               ?.showSnackBar(
                                                 SnackBar(
-                                                  content: Text("에러 발생!"),
+                                                  content: Text(
+                                                    "An error occurred.",
+                                                  ),
                                                 ),
                                               );
                                         }
@@ -715,9 +719,9 @@ void showAlertForAdd({
                                     }
                                   },
                                   child: Text(
-                                    "확인",
+                                    "Confirm",
                                     style: AppTypography.mainCaption_1.copyWith(
-                                      color: AppColors.primary,
+                                      color: AppColors.mainTextColor,
                                     ),
                                   ),
                                 ),
@@ -738,8 +742,10 @@ void showAlertForAdd({
                                     AppRouter.pop();
                                   },
                                   child: Text(
-                                    "취소",
-                                    style: AppTypography.mainCaption_1,
+                                    "Cancel",
+                                    style: AppTypography.mainCaption_1.copyWith(
+                                      color: AppColors.darkGrey,
+                                    ),
                                   ),
                                 ),
                               ),

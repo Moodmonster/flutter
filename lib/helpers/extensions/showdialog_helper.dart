@@ -27,7 +27,7 @@ class ShowDialogHelper {
             CupertinoDialogAction(
               isDefaultAction: true,
               child: const Text(
-                "확인",
+                "Confirm",
                 style: TextStyle(color: AppColors.primary),
               ),
               onPressed: () {
@@ -40,7 +40,7 @@ class ShowDialogHelper {
     );
   }
 
-  ///확인을 누르면 Action이 수행되는 알림창을 띄웁니다.
+  ///Confirm을 누르면 Action이 수행되는 알림창을 띄웁니다.
   static void showAlertWithAction({
     required VoidCallback onPressed,
     required String title,
@@ -60,7 +60,7 @@ class ShowDialogHelper {
                 onPressed();
               },
               child: const Text(
-                "확인",
+                "Confirm",
                 style: TextStyle(color: AppColors.primary),
               ),
             ),
@@ -70,7 +70,7 @@ class ShowDialogHelper {
     );
   }
 
-  ///확인을 누르면 Action이 수행되지만 사용자가 임의로 취소 가능한 알림창을 띄웁니다.
+  ///Confirm을 누르면 Action이 수행되지만 사용자가 임의로 Cancel 가능한 알림창을 띄웁니다.
   static void showAlertWithActionAndCancel({
     required VoidCallback onPressed,
     required String title,
@@ -93,7 +93,7 @@ class ShowDialogHelper {
               },
               child: Text(
                 enterMsg,
-                style: const TextStyle(color: AppColors.primary),
+                style: const TextStyle(color: AppColors.mainTextColor),
               ),
             ),
             CupertinoDialogAction(
@@ -103,7 +103,7 @@ class ShowDialogHelper {
               },
               child: Text(
                 cancelMsg,
-                style: const TextStyle(color: AppColors.lightBlack),
+                style: const TextStyle(color: AppColors.darkGrey),
               ),
             ),
           ],
@@ -117,11 +117,16 @@ class ShowDialogHelper {
     required String content,
     Color? backgroundColor,
     Color? textColor,
+    int? durationSeconds,
   }) {
     ScaffoldMessenger.of(AppRouter.navigatorKey.currentContext!).showSnackBar(
       SnackBar(
         content: Text(content, style: TextStyle(color: textColor)),
         backgroundColor: backgroundColor,
+        duration:
+            durationSeconds != null
+                ? Duration(seconds: durationSeconds)
+                : Duration(seconds: 4),
       ),
     );
   }

@@ -16,7 +16,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$WebtoonParagraph {
 
- List<String> get imgList; String get music_url;
+ int get displayOrder; String get image_url; String get music_url;
 /// Create a copy of WebtoonParagraph
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -29,16 +29,16 @@ $WebtoonParagraphCopyWith<WebtoonParagraph> get copyWith => _$WebtoonParagraphCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is WebtoonParagraph&&const DeepCollectionEquality().equals(other.imgList, imgList)&&(identical(other.music_url, music_url) || other.music_url == music_url));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is WebtoonParagraph&&(identical(other.displayOrder, displayOrder) || other.displayOrder == displayOrder)&&(identical(other.image_url, image_url) || other.image_url == image_url)&&(identical(other.music_url, music_url) || other.music_url == music_url));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(imgList),music_url);
+int get hashCode => Object.hash(runtimeType,displayOrder,image_url,music_url);
 
 @override
 String toString() {
-  return 'WebtoonParagraph(imgList: $imgList, music_url: $music_url)';
+  return 'WebtoonParagraph(displayOrder: $displayOrder, image_url: $image_url, music_url: $music_url)';
 }
 
 
@@ -49,7 +49,7 @@ abstract mixin class $WebtoonParagraphCopyWith<$Res>  {
   factory $WebtoonParagraphCopyWith(WebtoonParagraph value, $Res Function(WebtoonParagraph) _then) = _$WebtoonParagraphCopyWithImpl;
 @useResult
 $Res call({
- List<String> imgList, String music_url
+ int displayOrder, String image_url, String music_url
 });
 
 
@@ -66,10 +66,11 @@ class _$WebtoonParagraphCopyWithImpl<$Res>
 
 /// Create a copy of WebtoonParagraph
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? imgList = null,Object? music_url = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? displayOrder = null,Object? image_url = null,Object? music_url = null,}) {
   return _then(_self.copyWith(
-imgList: null == imgList ? _self.imgList : imgList // ignore: cast_nullable_to_non_nullable
-as List<String>,music_url: null == music_url ? _self.music_url : music_url // ignore: cast_nullable_to_non_nullable
+displayOrder: null == displayOrder ? _self.displayOrder : displayOrder // ignore: cast_nullable_to_non_nullable
+as int,image_url: null == image_url ? _self.image_url : image_url // ignore: cast_nullable_to_non_nullable
+as String,music_url: null == music_url ? _self.music_url : music_url // ignore: cast_nullable_to_non_nullable
 as String,
   ));
 }
@@ -81,16 +82,11 @@ as String,
 @JsonSerializable()
 
 class _WebtoonParagraph implements WebtoonParagraph {
-   _WebtoonParagraph({required final  List<String> imgList, required this.music_url}): _imgList = imgList;
+   _WebtoonParagraph({required this.displayOrder, required this.image_url, required this.music_url});
   factory _WebtoonParagraph.fromJson(Map<String, dynamic> json) => _$WebtoonParagraphFromJson(json);
 
- final  List<String> _imgList;
-@override List<String> get imgList {
-  if (_imgList is EqualUnmodifiableListView) return _imgList;
-  // ignore: implicit_dynamic_type
-  return EqualUnmodifiableListView(_imgList);
-}
-
+@override final  int displayOrder;
+@override final  String image_url;
 @override final  String music_url;
 
 /// Create a copy of WebtoonParagraph
@@ -106,16 +102,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _WebtoonParagraph&&const DeepCollectionEquality().equals(other._imgList, _imgList)&&(identical(other.music_url, music_url) || other.music_url == music_url));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _WebtoonParagraph&&(identical(other.displayOrder, displayOrder) || other.displayOrder == displayOrder)&&(identical(other.image_url, image_url) || other.image_url == image_url)&&(identical(other.music_url, music_url) || other.music_url == music_url));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_imgList),music_url);
+int get hashCode => Object.hash(runtimeType,displayOrder,image_url,music_url);
 
 @override
 String toString() {
-  return 'WebtoonParagraph(imgList: $imgList, music_url: $music_url)';
+  return 'WebtoonParagraph(displayOrder: $displayOrder, image_url: $image_url, music_url: $music_url)';
 }
 
 
@@ -126,7 +122,7 @@ abstract mixin class _$WebtoonParagraphCopyWith<$Res> implements $WebtoonParagra
   factory _$WebtoonParagraphCopyWith(_WebtoonParagraph value, $Res Function(_WebtoonParagraph) _then) = __$WebtoonParagraphCopyWithImpl;
 @override @useResult
 $Res call({
- List<String> imgList, String music_url
+ int displayOrder, String image_url, String music_url
 });
 
 
@@ -143,10 +139,11 @@ class __$WebtoonParagraphCopyWithImpl<$Res>
 
 /// Create a copy of WebtoonParagraph
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? imgList = null,Object? music_url = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? displayOrder = null,Object? image_url = null,Object? music_url = null,}) {
   return _then(_WebtoonParagraph(
-imgList: null == imgList ? _self._imgList : imgList // ignore: cast_nullable_to_non_nullable
-as List<String>,music_url: null == music_url ? _self.music_url : music_url // ignore: cast_nullable_to_non_nullable
+displayOrder: null == displayOrder ? _self.displayOrder : displayOrder // ignore: cast_nullable_to_non_nullable
+as int,image_url: null == image_url ? _self.image_url : image_url // ignore: cast_nullable_to_non_nullable
+as String,music_url: null == music_url ? _self.music_url : music_url // ignore: cast_nullable_to_non_nullable
 as String,
   ));
 }

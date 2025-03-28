@@ -103,6 +103,7 @@ class EpisodeService {
     required String contentCode,
     required String epTitle,
     required DateTime uploadDate,
+    required File? thumbnailFile, //  썸네일 추가
     required List<File> episodeFiles,
   }) async {
     String endPoint =
@@ -115,9 +116,10 @@ class EpisodeService {
       fields: {
         'title': epTitle,
         "contentCode": contentCode,
-        "uploadDate": uploadDate.toIso8601String(), // ISO 형식으로 변환
+        "uploadDate": uploadDate.toIso8601String(),
       },
-      files: episodeFiles,
+      thumbnailFile: thumbnailFile, //  전달
+      episodeFiles: episodeFiles,
     );
 
     if (response.statusCode == 200) {
@@ -132,9 +134,10 @@ class EpisodeService {
     required String contentCode,
     required String epTitle,
     required DateTime uploadDate,
-
-    required List<Uint8List> episodeFilesInWeb, // 여러 개의 파일
-    required List<String> episodeFileNamesInWeb, //각 파일의 파일명
+    required Uint8List? thumbnailFileInWeb, //  썸네일
+    required String? thumbnailFileNameInWeb,
+    required List<Uint8List> episodeFilesInWeb,
+    required List<String> episodeFileNamesInWeb,
   }) async {
     assert(episodeFilesInWeb.length == episodeFileNamesInWeb.length);
 
@@ -150,8 +153,10 @@ class EpisodeService {
         "contentCode": contentCode,
         "uploadDate": uploadDate.toIso8601String(),
       },
-      filesInWeb: episodeFilesInWeb, // ← List<Uint8List>
-      fileNamesInWeb: episodeFileNamesInWeb, // ← List<String>
+      thumbnailFileInWeb: thumbnailFileInWeb,
+      thumbnailFileNameInWeb: thumbnailFileNameInWeb,
+      episodeFilesInWeb: episodeFilesInWeb,
+      episodeFileNamesInWeb: episodeFileNamesInWeb,
     );
 
     if (response.statusCode == 200) {

@@ -26,6 +26,10 @@ class ContentScreen extends ConsumerWidget {
             : ref.watch(NovelProvider); // 소설이면 소설 프로바이더 가져온다
     return contentState.when(
       data: (contents) {
+        // 콘텐츠들을 title의 알파벳순으로 정렬 (대소문자 구분 없이)
+        final sortedContents = [...contents]..sort(
+          (a, b) => a.title.toLowerCase().compareTo(b.title.toLowerCase()),
+        );
         //콘텐츠들 중 clickCount가 가장 큰 놈을 mainContent로 지정
         final mainContent =
             contents.isNotEmpty
@@ -34,12 +38,12 @@ class ContentScreen extends ConsumerWidget {
                 )
                 : null;
 
-        return _buildContentScreen(context, contents, mainContent);
+        return _buildContentScreen(context, sortedContents, mainContent);
       },
       loading: () => Center(child: CircularProgressIndicator()),
       error: (error, _) {
         print("소설 데이터 로드 실패: $error");
-        return Center(child: Text('에러 발생: $error'));
+        return Center(child: Text('An error occurred.: $error'));
       },
     );
   }
@@ -162,7 +166,7 @@ class ContentScreen extends ConsumerWidget {
           Align(
             alignment: Alignment.centerRight,
             child: Text(
-              "총 ${contentList.length} 작품",
+              "Total: ${contentList.length} works",
               style: TextStyle(fontSize: 13, color: AppColors.descTextColor),
             ),
           ),
@@ -253,45 +257,45 @@ class ContentCard extends ConsumerWidget {
       child: Column(
         spacing: 8,
         children: [
-          // Container(
-          //   decoration: BoxDecoration(
-          //     boxShadow: [
-          //       //그림자
-          //       BoxShadow(
-          //         color: Colors.black.withValues(alpha: 0.5),
-          //         spreadRadius: 0,
-          //         blurRadius: 8.w,
-          //         offset: Offset(2.w, 4.h),
-          //       ),
-          //     ],
-          //   ),
-          //   child: ClipRRect(
-          //     borderRadius: BorderRadius.circular(12),
-          //     child:
-          //     // 웹툰 이미지
-          //     Image.network(
-          //       content.thumbnailUrl,
-          //       width: double.infinity,
-          //       height: 150.h,
-          //       fit: BoxFit.cover,
-          //       alignment: Alignment.center,
-          //       //오류 발생 시 기본 이미지 보이도록
-          //       errorBuilder: (context, error, stackTrace) {
-          //         return Image.asset(
-          //           "assets/imgs/default_img.jpg",
-          //           width: double.infinity,
-          //           height: 280.h,
-          //           fit: BoxFit.cover,
-          //           alignment: Alignment.center,
-          //         );
-          //       },
-          //     ),
-          //   ),
-          // ),
-          ThumbnailCardWithSkeleton(
-            imageUrl: content.thumbnailUrl,
-            borderRadius: 12,
+          Container(
+            decoration: BoxDecoration(
+              boxShadow: [
+                //그림자
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.5),
+                  spreadRadius: 0,
+                  blurRadius: 8.w,
+                  offset: Offset(2.w, 4.h),
+                ),
+              ],
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child:
+              // 웹툰 이미지
+              Image.network(
+                content.thumbnailUrl,
+                width: double.infinity,
+                height: 150.h,
+                fit: BoxFit.cover,
+                alignment: Alignment.center,
+                //오류 발생 시 기본 이미지 보이도록
+                errorBuilder: (context, error, stackTrace) {
+                  return Image.asset(
+                    "assets/imgs/default_img.jpg",
+                    width: double.infinity,
+                    height: 280.h,
+                    fit: BoxFit.cover,
+                    alignment: Alignment.center,
+                  );
+                },
+              ),
+            ),
           ),
+          // ThumbnailCardWithSkeleton(
+          //   imageUrl: content.thumbnailUrl,
+          //   borderRadius: 12,
+          // ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 3),
             child: Column(

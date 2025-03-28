@@ -1,8 +1,5 @@
 import 'dart:convert';
-import 'dart:io';
-import 'package:flutter/foundation.dart';
 import 'package:moodmonster/core/network/api_service.dart';
-import 'package:moodmonster/models/content.model.dart';
 import 'package:moodmonster/models/novel_paragraph.model.dart';
 
 class NovelParagraphsService {

@@ -39,6 +39,7 @@ dependencies:
   file_picker: ^9.2.1
   just_audio: ^0.9.46
   device_info_plus: ^11.3.3 #device info
+  inview_notifier_list: ^3.0.0 #현 위치 확인
   shimmer: ^3.0.0
 
 dev_dependencies:
@@ -59,7 +60,6 @@ flutter:
     - assets/imgs/
     - assets/svgs/
     - assets/fonts/
-    - assets/audio/
 
   # fonts:
   #   - family: Schyler

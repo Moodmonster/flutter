@@ -71,7 +71,9 @@ class _EpisodeListScreenState extends ConsumerState<EpisodeListScreen> {
       body: SafeArea(
         child: episodeState.when(
           loading: () => Center(child: CircularProgressIndicator()),
-          error: (err, stack) => Center(child: Text("에피소드 로딩 실패: $err")),
+          error:
+              (err, stack) =>
+                  Center(child: Text("Failed to load episode: $err")),
           data: (epList) => _buildEpisodeListScreenUI(contentInfo!, epList),
         ),
       ),
@@ -83,9 +85,16 @@ class _EpisodeListScreenState extends ConsumerState<EpisodeListScreen> {
                 onPressed: () {
                   if (contentInfo?.contentType == MyContentType.Webtoon) {
                     _showAlertForAddWebtoonEpisode(
-                      DialogTtitle: "에피소드 추가",
-                      cancelMsg: "취소",
-                      enterMsg: "확인",
+                      DialogTtitle: "Add Episode",
+                      cancelMsg: "Cancel",
+                      enterMsg: "Confirm",
+                      contentInfo: contentInfo!,
+                    );
+                  } else {
+                    _showAlertForAddEpisode(
+                      DialogTtitle: "Add Episode",
+                      cancelMsg: "Cancel",
+                      enterMsg: "Confirm",
                       contentInfo: contentInfo!,
                     );
                   }
@@ -99,8 +108,7 @@ class _EpisodeListScreenState extends ConsumerState<EpisodeListScreen> {
                 },
                 child: Icon(Icons.add, color: AppColors.background),
                 elevation: 10,
-                backgroundColor: AppColors.mainTextColor,
-
+                backgroundColor: AppColors.primary,
                 shape: CircleBorder(),
               )
               : null,
@@ -230,7 +238,6 @@ class _EpisodeListScreenState extends ConsumerState<EpisodeListScreen> {
                     ),
                   ],
                 ),
-
                 SizedBox(height: 6.h),
                 Text(
                   contentInfo.desc ?? "데이터 없음",
@@ -252,7 +259,7 @@ class _EpisodeListScreenState extends ConsumerState<EpisodeListScreen> {
             child: Align(
               alignment: Alignment.centerRight,
               child: Text(
-                "총 ${epList.length}화",
+                "Total: ${epList.length} episodes",
                 style: TextStyle(fontSize: 13, color: AppColors.descTextColor),
               ),
             ),
@@ -309,7 +316,7 @@ class MenuButtonInEpoisodeList extends ConsumerWidget {
               onPressed: () async {
                 //로딩창 띄우기
                 ShowDialogHelper.showLoadingWithMessage(
-                  message: "콘텐츠를 삭제중입니다.",
+                  message: "Deleting content...",
                 );
                 try {
                   //콘텐츠가 소설이면
@@ -326,14 +333,19 @@ class MenuButtonInEpoisodeList extends ConsumerWidget {
                   ShowDialogHelper.closeLoading();
                   AppRouter.pop();
 
-                  ShowDialogHelper.showSnackBar(content: "삭제 완료!");
+                  ShowDialogHelper.showSnackBar(
+                    content: "Deleted successfully!",
+                  );
                 } catch (err) {
                   ShowDialogHelper.closeLoading();
-                  ShowDialogHelper.showSnackBar(content: "에러 발생: $err");
+                  ShowDialogHelper.showSnackBar(
+                    content: "An error occurred.: $err",
+                  );
                 }
               },
               title: "Delete [ ${contentInfo!.title} ]?",
-              message: "Are You Sure? \nYou Can't Cancel this action",
+              message:
+                  "Are you sure you want to delete this episode?\nThis action cannot be undone.",
             );
 
             break;
@@ -395,7 +407,7 @@ class EpisodeListItem extends StatelessWidget {
                         ).read(EpisodeProvider.notifier);
                         //로딩창 띄우기
                         ShowDialogHelper.showLoadingWithMessage(
-                          message: "에피스드를 삭제중입니다.",
+                          message: "Deleting episode...",
                         );
                         //에피소드 삭제 호출
                         try {
@@ -406,8 +418,9 @@ class EpisodeListItem extends StatelessWidget {
                           );
                           ShowDialogHelper.closeLoading();
                           ShowDialogHelper.showSnackBar(
-                            content: "에피소드 삭제 완료!",
+                            content: "Episode deleted successfully!",
                             backgroundColor: AppColors.primary,
+                            textColor: AppColors.white,
                           );
                         } catch (e) {
                           ShowDialogHelper.closeLoading();
@@ -415,8 +428,9 @@ class EpisodeListItem extends StatelessWidget {
                         }
                       },
                       title: "Delete [ ${episodeInfo.epTitle} ]?",
-                      message: "Are You Sure? \nYou Can't Cancel this action",
-                      enterMsg: "Ok",
+                      message:
+                          "Are you sure you want to delete this episode?\nThis action cannot be undone.",
+                      enterMsg: "Confirm",
                       cancelMsg: "Cancel",
                     );
                   },
@@ -431,6 +445,7 @@ class EpisodeListItem extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8),
                   child: Image.network(
                     episodeInfo.thumbnailUrl,
+
                     width: 60.w,
                     height: 60.h,
 
@@ -470,10 +485,11 @@ class EpisodeListItem extends StatelessWidget {
           _showAlertWithTextFieldAndActionAndCancel(
             contentInfo: contentInfo,
             episodeInfo: episodeInfo,
-            title: "음악 분위기 입력 ",
-            message: "원하는 음악 분위기를 입력해주세요. \n 빈칸이면 알아서 생성됨",
-            enterMsg: "확인",
-            cancelMsg: "취소",
+            title: "Enter Music Mood ",
+            message:
+                "Describe the desired mood or style for the music.\nLeave it blank to generate automatically.",
+            enterMsg: "Confirm",
+            cancelMsg: "Cancel",
           );
           return;
           // 에피소드 상세 페이지로 이동
@@ -518,7 +534,7 @@ void _showAlertWithTextFieldAndActionAndCancel({
                   cursorHeight: 14,
                   textAlignVertical: TextAlignVertical.center,
                   decoration: InputDecoration(
-                    hintText: "ex:재즈풍의 피아노",
+                    hintText: "e.g. Soft jazz piano",
                     hintStyle: TextStyle(
                       fontSize: 12,
                       color: AppColors.descTextColor,
@@ -547,19 +563,31 @@ void _showAlertWithTextFieldAndActionAndCancel({
             onPressed: () async {
               //모달창 닫기
               AppRouter.pop();
-              //소설 내용 보는 화면으로 이동
-              AppRouter.pushNamed(
-                Routes.novelParagraphsShowScreen,
-                args: {
-                  'episodeInfo': episodeInfo,
-                  'prompt': _SongMoodEnterController.text,
-                  'contentInfo': contentInfo,
-                },
-              );
+              //소설이면 소설 내용 보는 화면으로 이동
+              if (contentInfo.contentType == MyContentType.Novel) {
+                AppRouter.pushNamed(
+                  Routes.novelParagraphsShowScreen,
+                  args: {
+                    'episodeInfo': episodeInfo,
+                    'prompt': _SongMoodEnterController.text,
+                    'contentInfo': contentInfo,
+                  },
+                );
+              } else {
+                //웹툰이면 웹툰 보는 화면으로 이동
+                AppRouter.pushNamed(
+                  Routes.webtoonParagraphsShowScreen,
+                  args: {
+                    'episodeInfo': episodeInfo,
+                    'prompt': _SongMoodEnterController.text,
+                    'contentInfo': contentInfo,
+                  },
+                );
+              }
             },
             child: Text(
               enterMsg,
-              style: const TextStyle(color: AppColors.primary),
+              style: const TextStyle(color: AppColors.mainTextColor),
             ),
           ),
           CupertinoDialogAction(
@@ -569,7 +597,7 @@ void _showAlertWithTextFieldAndActionAndCancel({
             },
             child: Text(
               cancelMsg,
-              style: const TextStyle(color: AppColors.lightBlack),
+              style: const TextStyle(color: AppColors.darkGrey),
             ),
           ),
         ],
@@ -591,7 +619,7 @@ void _showAlertForAddEpisode({
   //사용자가 선택한 파일 저장 변수(웹용)
   Uint8List? selectedFileInWeb;
 
-  //사용자가 선택한 파일의 파일명
+  //사용자가 선택한 파일의 File Name
   String? selectedFileName;
   final _scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
 
@@ -632,8 +660,7 @@ void _showAlertForAddEpisode({
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text("에피소드 제목", softWrap: true),
-
+                            Text("Episode Title", softWrap: true),
                             SizedBox(height: 5.h),
                             Flexible(
                               //width: 170.w,
@@ -671,8 +698,7 @@ void _showAlertForAddEpisode({
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Text("파일 업로드", softWrap: true),
-
+                            Text("Upload File", softWrap: true),
                             SizedBox(height: 5.h),
                             Flexible(
                               //width: 170.w,
@@ -686,7 +712,6 @@ void _showAlertForAddEpisode({
                                         borderRadius: BorderRadius.circular(8),
                                       ),
                                       backgroundColor: AppColors.primary,
-
                                       alignment: Alignment.centerLeft,
                                       textStyle: const TextStyle(fontSize: 12),
                                     ),
@@ -731,7 +756,7 @@ void _showAlertForAddEpisode({
                                             color: AppColors.white,
                                           ),
                                           Text(
-                                            "파일 업로드",
+                                            "Upload File",
                                             style: TextStyle(
                                               color: AppColors.white,
                                             ),
@@ -816,7 +841,7 @@ void _showAlertForAddEpisode({
                                                   CrossAxisAlignment.start,
                                               children: [
                                                 Text(
-                                                  "파일명",
+                                                  "File Name",
                                                   style: TextStyle(
                                                     fontSize: 10,
                                                     fontWeight: FontWeight.bold,
@@ -875,7 +900,7 @@ void _showAlertForAddEpisode({
                                           ?.showSnackBar(
                                             SnackBar(
                                               content: Text(
-                                                "입력 안 된 값이 있습니다",
+                                                "Some fields are missing",
                                                 style: TextStyle(
                                                   color:
                                                       AppColors.mainTextColor,
@@ -894,7 +919,7 @@ void _showAlertForAddEpisode({
                                           ).read(EpisodeProvider.notifier);
                                       //로딩창 띄우기
                                       ShowDialogHelper.showLoadingWithMessage(
-                                        message: "에피소드를 추가중입니다.",
+                                        message: "Adding episode...",
                                       );
                                       try {
                                         if (selectedFile != null) {
@@ -909,7 +934,7 @@ void _showAlertForAddEpisode({
                                                 uploadDate: DateTime.now(),
                                                 episodeFile: selectedFile!,
                                               );
-                                        } //  파일가 웹에서 업로드한 데이터이고 파일명도 제대로 인식했으면
+                                        } //  파일가 웹에서 업로드한 데이터이고 File Name도 제대로 인식했으면
                                         else if (selectedFileInWeb != null &&
                                             selectedFileName != null) {
                                           await episodeNotifier.addEpisodeInWeb(
@@ -928,7 +953,7 @@ void _showAlertForAddEpisode({
                                               ?.showSnackBar(
                                                 SnackBar(
                                                   content: Text(
-                                                    "파일 선택에 문제가 있습니다",
+                                                    "There was a problem selecting the file",
                                                   ),
                                                 ),
                                               );
@@ -938,8 +963,11 @@ void _showAlertForAddEpisode({
                                         ShowDialogHelper.closeLoading();
                                         AppRouter.pop();
                                         ShowDialogHelper.showSnackBar(
-                                          content: "추가 완료!",
+                                          content:
+                                              "Content added successfully!",
                                           backgroundColor: AppColors.primary,
+
+                                          textColor: AppColors.white,
                                         );
                                       } catch (err) {
                                         //오류 발생시 스낵바 띄움
@@ -947,7 +975,11 @@ void _showAlertForAddEpisode({
                                         print(err);
                                         _scaffoldMessengerKey.currentState
                                             ?.showSnackBar(
-                                              SnackBar(content: Text("에러 발생!")),
+                                              SnackBar(
+                                                content: Text(
+                                                  "An error occurred.",
+                                                ),
+                                              ),
                                             );
                                       }
 
@@ -955,9 +987,9 @@ void _showAlertForAddEpisode({
                                     }
                                   },
                                   child: Text(
-                                    "확인",
+                                    "Confirm",
                                     style: AppTypography.mainCaption_1.copyWith(
-                                      color: AppColors.primary,
+                                      color: AppColors.mainTextColor,
                                     ),
                                   ),
                                 ),
@@ -977,11 +1009,11 @@ void _showAlertForAddEpisode({
                                   onPressed: () {
                                     AppRouter.pop();
                                   },
-
                                   child: Text(
-                                    "취소",
-
-                                    style: AppTypography.mainCaption_1,
+                                    "Cancel",
+                                    style: AppTypography.mainCaption_1.copyWith(
+                                      color: AppColors.darkGrey,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -1014,7 +1046,7 @@ void _showAlertForAddWebtoonEpisode({
   //사용자가 선택한 파일 저장 변수(웹용)
   Uint8List? selectedThumbnailFileInWeb;
 
-  //사용자가 선택한 파일의 파일명
+  //사용자가 선택한 파일의 File Name
   String? selectedThumbnailFileName;
 
   List<File> selectedFiles = [];
@@ -1056,8 +1088,7 @@ void _showAlertForAddWebtoonEpisode({
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text("에피소드 제목", softWrap: true),
-
+                            Text("Episode Title", softWrap: true),
                             SizedBox(height: 5.h),
                             Flexible(
                               //width: 170.w,
@@ -1095,8 +1126,7 @@ void _showAlertForAddWebtoonEpisode({
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Text("썸네일 업로드", softWrap: true),
-
+                            Text("Upload Episode Thumbnail", softWrap: true),
                             SizedBox(height: 5.h),
                             Flexible(
                               //width: 170.w,
@@ -1110,7 +1140,6 @@ void _showAlertForAddWebtoonEpisode({
                                         borderRadius: BorderRadius.circular(8),
                                       ),
                                       backgroundColor: AppColors.primary,
-
                                       alignment: Alignment.centerLeft,
                                       textStyle: const TextStyle(fontSize: 12),
                                     ),
@@ -1155,7 +1184,7 @@ void _showAlertForAddWebtoonEpisode({
                                             color: AppColors.white,
                                           ),
                                           Text(
-                                            "파일 업로드",
+                                            "Upload File",
                                             style: TextStyle(
                                               color: AppColors.white,
                                             ),
@@ -1240,7 +1269,7 @@ void _showAlertForAddWebtoonEpisode({
                                                   CrossAxisAlignment.start,
                                               children: [
                                                 Text(
-                                                  "파일명",
+                                                  "File Name",
                                                   style: TextStyle(
                                                     fontSize: 10,
                                                     fontWeight: FontWeight.bold,
@@ -1271,11 +1300,9 @@ void _showAlertForAddWebtoonEpisode({
                           children: [
                             Align(
                               alignment: Alignment.centerLeft,
-                              child: Text("에피소드 이미지 업로드"),
+                              child: Text("Upload Episode Images"),
                             ),
-
                             SizedBox(height: 5.h),
-
                             ElevatedButton(
                               style: ElevatedButton.styleFrom(
                                 alignment: Alignment.center,
@@ -1285,7 +1312,6 @@ void _showAlertForAddWebtoonEpisode({
                                 ),
                                 backgroundColor: AppColors.primary,
                               ),
-
                               onPressed: () async {
                                 FilePickerResult? result = await FilePicker
                                     .platform
@@ -1327,20 +1353,18 @@ void _showAlertForAddWebtoonEpisode({
                                   ),
                                   SizedBox(width: 8),
                                   Text(
-                                    "이미지 여러 개 업로드",
+                                    "Upload Multiple Images",
                                     style: TextStyle(color: AppColors.white),
                                   ),
                                 ],
                               ),
                             ),
-
                             SizedBox(height: 10.h),
-
                             if ((kIsWeb
                                 ? selectedFilesInWeb.isNotEmpty
                                 : selectedFiles.isNotEmpty))
                               SizedBox(
-                                height: 120.h,
+                                height: 130.h,
                                 child: ListView.separated(
                                   scrollDirection: Axis.horizontal,
                                   itemCount: selectedFileNames.length,
@@ -1371,7 +1395,7 @@ void _showAlertForAddWebtoonEpisode({
                                         ),
                                       );
                                     }
-                                    //파일명 정보
+                                    //File Name 정보
                                     return Column(
                                       children: [
                                         imageWidget,
@@ -1393,7 +1417,7 @@ void _showAlertForAddWebtoonEpisode({
                           ],
                         ),
 
-                        SizedBox(height: 10.h),
+                        //SizedBox(height: 10.h),
                         //구분선
                         Row(
                           children: [
@@ -1405,7 +1429,7 @@ void _showAlertForAddWebtoonEpisode({
                             ),
                           ],
                         ),
-                        SizedBox(height: 10.h),
+
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -1417,7 +1441,9 @@ void _showAlertForAddWebtoonEpisode({
                                     _scaffoldMessengerKey.currentState
                                         ?.showSnackBar(
                                           SnackBar(
-                                            content: Text("입력 안 된 값이 있습니다"),
+                                            content: Text(
+                                              "Some fields are missing",
+                                            ),
                                           ),
                                         );
                                     return;
@@ -1430,9 +1456,10 @@ void _showAlertForAddWebtoonEpisode({
                                       ).read(EpisodeProvider.notifier);
 
                                   ShowDialogHelper.showLoadingWithMessage(
-                                    message: "에피소드를 추가중입니다.",
+                                    message: "Adding episode...",
                                   );
                                   try {
+                                    //모바일이면
                                     if (!kIsWeb) {
                                       await episodeNotifier
                                           .addEpisodeInMobileForFiles(
@@ -1441,9 +1468,12 @@ void _showAlertForAddWebtoonEpisode({
                                             contentCode: contentInfo.code,
                                             epTitle: _titleController.text,
                                             uploadDate: DateTime.now(),
+                                            thumbnailFile:
+                                                selectedThumbnailFile,
                                             episodeFiles: selectedFiles,
                                           );
                                     } else {
+                                      //웹이면
                                       await episodeNotifier
                                           .addEpisodeInWebForFiles(
                                             contentType:
@@ -1451,6 +1481,10 @@ void _showAlertForAddWebtoonEpisode({
                                             contentCode: contentInfo.code,
                                             epTitle: _titleController.text,
                                             uploadDate: DateTime.now(),
+                                            thumbnailFileInWeb:
+                                                selectedThumbnailFileInWeb,
+                                            thumbnailFileNameInWeb:
+                                                selectedThumbnailFileName,
                                             episodeFilesInWeb:
                                                 selectedFilesInWeb,
                                             episodeFileNamesInWeb:
@@ -1460,21 +1494,25 @@ void _showAlertForAddWebtoonEpisode({
                                     ShowDialogHelper.closeLoading();
                                     AppRouter.pop();
                                     ShowDialogHelper.showSnackBar(
-                                      content: "추가 완료!",
+                                      content: "Content added successfully!",
                                       backgroundColor: AppColors.primary,
+                                      textColor: AppColors.white,
                                     );
                                   } catch (e) {
                                     ShowDialogHelper.closeLoading();
                                     _scaffoldMessengerKey.currentState
                                         ?.showSnackBar(
-                                          SnackBar(content: Text("에러 발생!")),
+                                          SnackBar(
+                                            content: Text("An error occurred."),
+                                          ),
                                         );
                                   }
                                 },
+
                                 child: Text(
-                                  "확인",
+                                  "Confirm",
                                   style: AppTypography.mainCaption_1.copyWith(
-                                    color: AppColors.primary,
+                                    color: AppColors.mainTextColor,
                                   ),
                                 ),
                               ),
@@ -1483,8 +1521,10 @@ void _showAlertForAddWebtoonEpisode({
                               child: TextButton(
                                 onPressed: () => AppRouter.pop(),
                                 child: Text(
-                                  "취소",
-                                  style: AppTypography.mainCaption_1,
+                                  "Cancel",
+                                  style: AppTypography.mainCaption_1.copyWith(
+                                    color: AppColors.darkGrey,
+                                  ),
                                 ),
                               ),
                             ),

@@ -42,7 +42,7 @@ class NovelService {
     required String userId,
     required String prompt,
   }) async {
-    final response = await ApiService.postRequest("/contents/novel/createA", {
+    final response = await ApiService.postRequest("/contents/novel/create", {
       'title': title,
       'desc': desc,
       'author': author,

@@ -3,8 +3,6 @@ import 'package:moodmonster/core/network/api_service.dart';
 import 'package:moodmonster/core/network/webtoon_paragraphs_serviece.dart';
 import 'package:moodmonster/models/webtoon_paragraph.model.dart';
 
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 final webtoonParagraphProvider = StateNotifierProvider.autoDispose<
   WebtoonParagraphNotifier,
   AsyncValue<List<WebtoonParagraph>>

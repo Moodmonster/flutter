@@ -69,7 +69,7 @@ class _HomeScreenState extends State<HomeScreen>
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Container(
-                        width: 200.w,
+                        width: 220.w,
                         height: 60.h,
                         child: TabBar(
                           unselectedLabelColor: AppColors.deActiveGray,

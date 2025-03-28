@@ -36,6 +36,11 @@ dependencies:
   cached_network_image: ^3.4.1 #web 로딩 속도 줄이기 & tick마다 새로그리기 방지
   flutter_svg: ^2.0.17 #svg 사용하기 위함
   image_picker: ^1.1.2
+  file_picker: ^9.2.1
+  just_audio: ^0.9.46
+  device_info_plus: ^11.3.3 #device info
+  inview_notifier_list: ^3.0.0 #현 위치 확인
+  shimmer: ^3.0.0
 
 dev_dependencies:
   flutter_test:

@@ -7,12 +7,12 @@ part of 'content.model.dart';
 // **************************************************************************
 
 _Content _$ContentFromJson(Map<String, dynamic> json) => _Content(
-  code: (json['code'] as num).toInt(),
+  code: json['code'] as String,
   title: json['title'] as String,
   desc: json['desc'] as String,
   author: json['author'] as String,
   userId: json['userId'] as String,
-  contentType: $enumDecode(_$ContentTypeEnumMap, json['contentType']),
+  contentType: $enumDecode(_$MyContentTypeEnumMap, json['contentType']),
   clickCount: (json['clickCount'] as num).toInt(),
   thumbnailUrl: json['thumbnailUrl'] as String,
 );
@@ -23,12 +23,12 @@ Map<String, dynamic> _$ContentToJson(_Content instance) => <String, dynamic>{
   'desc': instance.desc,
   'author': instance.author,
   'userId': instance.userId,
-  'contentType': _$ContentTypeEnumMap[instance.contentType]!,
+  'contentType': _$MyContentTypeEnumMap[instance.contentType]!,
   'clickCount': instance.clickCount,
   'thumbnailUrl': instance.thumbnailUrl,
 };
 
-const _$ContentTypeEnumMap = {
-  ContentType.Webtoon: 'Webtoon',
-  ContentType.Novel: 'Novel',
+const _$MyContentTypeEnumMap = {
+  MyContentType.Webtoon: 'Webtoon',
+  MyContentType.Novel: 'Novel',
 };

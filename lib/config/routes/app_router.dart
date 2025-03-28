@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:moodmonster/models/content.model.dart';
+import 'package:moodmonster/pages/episode_list_screen.page_view.dart';
 
 import './routes.dart';
 
@@ -10,25 +12,21 @@ class AppRouter {
       GlobalKey<NavigatorState>();
 
   static Route<dynamic>? generateRoute(RouteSettings settings) {
+    //정적 라우팅
     final routeName = settings.name;
-    final routeBuilder = Routes.routeExist(routeName)
-        ? Routes.getRoute(routeName)
-        : Routes.getRoute(Routes.notFoundScreenRoute);
+    final routeBuilder =
+        Routes.routeExist(routeName)
+            ? Routes.getRoute(routeName)
+            : Routes.getRoute(Routes.notFoundScreenRoute);
 
     return MaterialPageRoute<dynamic>(
       builder: (_) => routeBuilder(),
-      settings: RouteSettings(
-        name: routeName,
-        arguments: settings.arguments,
-      ),
+      settings: RouteSettings(name: routeName, arguments: settings.arguments),
     );
   }
 
   static Future<dynamic> pushNamed(String routeName, {dynamic args}) {
-    return navigatorKey.currentState!.pushNamed(
-      routeName,
-      arguments: args,
-    );
+    return navigatorKey.currentState!.pushNamed(routeName, arguments: args);
   }
 
   static Future<dynamic> push(Widget page) {
@@ -49,9 +47,7 @@ class AppRouter {
   }
 
   static void popUntil(String routeName) {
-    navigatorKey.currentState!.popUntil(
-      ModalRoute.withName(routeName),
-    );
+    navigatorKey.currentState!.popUntil(ModalRoute.withName(routeName));
   }
 
   static void popUntilRoot() {

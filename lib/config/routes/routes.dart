@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:moodmonster/pages/episode_list_screen.page_view.dart';
 import 'package:moodmonster/pages/main_screen.page_view.dart';
+import 'package:moodmonster/pages/novel_paragraphs_show_screen.dart';
+import 'package:moodmonster/pages/webtoon_paragraphs_show_screen.dart';
+import 'package:moodmonster/pages/tts/tts_screen.page.dart';
 
 import '../../feature/auth/login_screen_view.dart';
 import '../../feature/error/page_not_found_view.dart';
@@ -17,6 +20,10 @@ class Routes {
   static const String loginScreenRoute = '/auth/login';
   static const String homeScreenRoute = '/home';
   static const String episodeListScreen = '/episodes';
+  static const String novelParagraphsShowScreen = '/episodes/novelParagraphs';
+  static const String webtoonParagraphsShowScreen =
+      '/episodes/webtoonParagraphs';
+  static const String novelTTS = '/episodes/novelParagraphs/tts';
 
   static final Map<String, Widget Function()> _routesMap = {
     //initialRoute: () => const MoodMonsterMainScreen(),
@@ -25,6 +32,9 @@ class Routes {
     notFoundScreenRoute: () => const PageNotFoundScreen(),
     homeScreenRoute: () => const HomeScreen(),
     episodeListScreen: () => const EpisodeListScreen(),
+    novelParagraphsShowScreen: () => const NovelParagraphsShowScreen(),
+    webtoonParagraphsShowScreen: () => const WebtoonParagraphsShowScreen(),
+    novelTTS: () => const TTSPage(),
   };
 
   static Widget Function() getRoute(String? routeName) {

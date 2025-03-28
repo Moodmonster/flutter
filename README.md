@@ -32,8 +32,8 @@
 - **Repositories**: 데이터 접근 계약을 정의한 파일들로, `auth.i_repository.dart`, `user.i_repository.dart` 등이 있습니다.
   해당 값은 data layer 에서의 의존성을 역전시키기 위해 사용되는 인터페이스 입니다.
 - **Usecases**: 앱의 비즈니스 로직이 구현된 곳으로, `sign_in.usecase.dart`, `sign_out.usecase.dart` 등이 있습니다.
-- **Voes**: 값 객체로, `user_profile.vo.dart`, `oauth_provider.vo.dart`와 같이 식별이 불가능한 객체들을 나타냅니다. *
-  *Entities**에 포함될 수 있습니다.
+- **Voes**: 값 객체로, `user_profile.vo.dart`, `oauth_provider.vo.dart`와 같이 식별이 불가능한 객체들을 나타냅니다. \*
+  \*Entities\*\*에 포함될 수 있습니다.
 
 ### 데이터 레이어 (Persistence)
 
@@ -82,28 +82,28 @@
 
 ### Tag 설명
 
-| Tag Name             | Description                            |
-|----------------------|----------------------------------------|
-| **feat**             | 새로운 기능을 추가                             |
-| **fix**              | 버그 수정                                  |
-| **design**           | CSS 등 사용자 UI 디자인 변경                    |
-| **!BREAKING CHANGE** | 커다란 API 변경 또는 호환성에 큰 영향이 있는 경우         |
-| **!HOTFIX**          | 급하게 치명적인 버그를 수정해야 할 때                  |
+| Tag Name             | Description                                                      |
+| -------------------- | ---------------------------------------------------------------- |
+| **feat**             | 새로운 기능을 추가                                               |
+| **fix**              | 버그 수정                                                        |
+| **design**           | CSS 등 사용자 UI 디자인 변경                                     |
+| **!BREAKING CHANGE** | 커다란 API 변경 또는 호환성에 큰 영향이 있는 경우                |
+| **!HOTFIX**          | 급하게 치명적인 버그를 수정해야 할 때                            |
 | **style**            | 코드 포맷 변경, 세미콜론 누락 등, 코드의 동작에 영향이 없는 경우 |
-| **refactor**         | 프로덕션 코드 리팩토링 (기능 변경 없이 구조 개선)          |
-| **comment**          | 주석 추가 및 변경                             |
-| **docs**             | 문서 수정 (README.md 등의 문서 수정)             |
-| **test**             | 테스트 코드 추가 또는 리팩토링                      |
-| **chore**            | 빌드 작업 업데이트, 패키지 관리자 설정 변경 등            |
-| **rename**           | 파일이나 폴더명 수정 및 이동                       |
-| **remove**           | 파일 삭제 작업                               |
-| **merge**            | 브랜치 병합 커밋                              |
-| **revert**           | 이전 커밋을 취소할 때 사용                        |
+| **refactor**         | 프로덕션 코드 리팩토링 (기능 변경 없이 구조 개선)                |
+| **comment**          | 주석 추가 및 변경                                                |
+| **docs**             | 문서 수정 (README.md 등의 문서 수정)                             |
+| **test**             | 테스트 코드 추가 또는 리팩토링                                   |
+| **chore**            | 빌드 작업 업데이트, 패키지 관리자 설정 변경 등                   |
+| **rename**           | 파일이나 폴더명 수정 및 이동                                     |
+| **remove**           | 파일 삭제 작업                                                   |
+| **merge**            | 브랜치 병합 커밋                                                 |
+| **revert**           | 이전 커밋을 Cancel할 때 사용                                     |
 
 ### 커밋 메시지 작성 규칙
 
 1. **Tag와 Scope**는 콜론(`:`)으로 구분하며, 태그는 소문자로 작성합니다.
-    - 예: `feat(users): add user login feature`
+   - 예: `feat(users): add user login feature`
 2. **Subject**는 50자 이내로 간결하고 명확하게 작성합니다.
 3. **Body**는 선택 사항이지만, 필요한 경우 커밋의 상세 내용을 작성할 수 있습니다. 72자 이하로 작성하는 것이 좋습니다.
 4. **BREAKING CHANGE**는 커다란 변경 사항이 발생할 때 사용하며, commit body에 해당 변경에 대한 상세 설명을 포함해야 합니다.

@@ -356,11 +356,11 @@ class MenuButtonInEpoisodeList extends ConsumerWidget {
       },
       itemBuilder: (BuildContext buildContext) {
         return MenuType.values
-            .where(
-              (value) =>
-                  value != MenuType.Delete ||
-                  contentInfo!.userId == PrefsKeys.userId,
-            )
+            // .where(
+            //   (value) =>
+            //       value != MenuType.Delete ||
+            //       contentInfo!.userId == PrefsKeys.userId,
+            // )
             .map(
               (value) => PopupMenuItem(
                 value: value,
@@ -1316,34 +1316,31 @@ void _showAlertForAddWebtoonEpisode({
                                 FilePickerResult? result = await FilePicker
                                     .platform
                                     .pickFiles(
-                                      allowMultiple: true,
+                                      allowMultiple: false, // ✅ 하나만 선택 가능
                                       type: FileType.custom,
                                       allowedExtensions: ['jpg', 'jpeg', 'png'],
                                       withData: true,
                                     );
 
-                                if (result != null) {
+                                if (result != null && result.files.isNotEmpty) {
+                                  final file = result.files.first;
+
                                   setState(() {
-                                    selectedFiles.clear();
-                                    selectedFilesInWeb.clear();
-                                    selectedFileNames.clear();
+                                    selectedFileNames.add(file.name);
 
-                                    for (var file in result.files) {
-                                      selectedFileNames.add(file.name);
-
-                                      if (kIsWeb) {
-                                        if (file.bytes != null) {
-                                          selectedFilesInWeb.add(file.bytes!);
-                                        }
-                                      } else {
-                                        if (file.path != null) {
-                                          selectedFiles.add(File(file.path!));
-                                        }
+                                    if (kIsWeb) {
+                                      if (file.bytes != null) {
+                                        selectedFilesInWeb.add(file.bytes!);
+                                      }
+                                    } else {
+                                      if (file.path != null) {
+                                        selectedFiles.add(File(file.path!));
                                       }
                                     }
                                   });
                                 }
                               },
+
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
@@ -1353,7 +1350,7 @@ void _showAlertForAddWebtoonEpisode({
                                   ),
                                   SizedBox(width: 8),
                                   Text(
-                                    "Upload Multiple Images",
+                                    "Upload Image",
                                     style: TextStyle(color: AppColors.white),
                                   ),
                                 ],

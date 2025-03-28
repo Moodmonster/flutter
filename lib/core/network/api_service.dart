@@ -85,12 +85,12 @@ class ApiService {
   static Future<http.StreamedResponse> postRequestWithMultipleFiles({
     required String endpoint,
     required Map<String, dynamic> fields,
-    File? thumbnailFile, // ✅ 모바일용 썸네일
-    List<File>? episodeFiles, // ✅ 모바일용 에피소드 이미지
-    Uint8List? thumbnailFileInWeb, // ✅ 웹용 썸네일
-    List<Uint8List>? episodeFilesInWeb, // ✅ 웹용 에피소드 이미지
-    String? thumbnailFileNameInWeb, // ✅ 웹용 썸네일 파일명
-    List<String>? episodeFileNamesInWeb, // ✅ 웹용 에피소드 파일명
+    File? thumbnailFile, //  모바일용 썸네일
+    List<File>? episodeFiles, //  모바일용 에피소드 이미지
+    Uint8List? thumbnailFileInWeb, //  웹용 썸네일
+    List<Uint8List>? episodeFilesInWeb, //  웹용 에피소드 이미지
+    String? thumbnailFileNameInWeb, //  웹용 썸네일 파일명
+    List<String>? episodeFileNamesInWeb, //  웹용 에피소드 파일명
   }) async {
     var uri = Uri.parse(baseUrl + endpoint);
     var request = http.MultipartRequest("POST", uri);
@@ -100,7 +100,7 @@ class ApiService {
       request.fields[key] = value.toString();
     });
 
-    // ✅ 모바일 처리
+    //  모바일 처리
 
     if (!kIsWeb) {
       if (thumbnailFile != null) {
@@ -123,7 +123,7 @@ class ApiService {
         }
       }
     } else {
-      // ✅ 웹 처리
+      //  웹 처리
       if (thumbnailFileInWeb != null && thumbnailFileNameInWeb != null) {
         final thumbPart = http.MultipartFile.fromBytes(
           'thumbnailImage',
@@ -134,6 +134,7 @@ class ApiService {
       }
 
       if (episodeFilesInWeb != null && episodeFileNamesInWeb != null) {
+        print("episodeFilesInWeb.length");
         for (int i = 0; i < episodeFilesInWeb.length; i++) {
           final filePart = http.MultipartFile.fromBytes(
             'images',
@@ -163,7 +164,7 @@ class ApiService {
   //     request.fields[key] = value.toString();
   //   });
 
-  //   // ✅ 모바일: File 리스트 처리
+  //   //  모바일: File 리스트 처리
   //   if (files != null) {
   //     for (var file in files) {
   //       final multipartFile = http.MultipartFile.fromBytes(
@@ -186,7 +187,7 @@ class ApiService {
   //       request.files.add(multipartFile3);
   //     }
   //   }
-  //   // ✅ 웹: Uint8List + filename 처리
+  //   //  웹: Uint8List + filename 처리
   //   else if (filesInWeb != null && fileNamesInWeb != null) {
   //     if (filesInWeb.length != fileNamesInWeb.length) {
   //       throw Exception("웹 파일과 이름 리스트의 길이가 일치하지 않습니다.");

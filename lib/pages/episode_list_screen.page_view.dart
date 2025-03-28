@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -70,6 +71,7 @@ class _EpisodeListScreenState extends ConsumerState<EpisodeListScreen> {
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
+        bottom: false,
         child: episodeState.when(
           loading: () => Center(child: CircularProgressIndicator()),
           error:
@@ -128,22 +130,20 @@ class _EpisodeListScreenState extends ConsumerState<EpisodeListScreen> {
             children: [
               // 썸네일 사진
               contentInfo != null
-                  ? Image.network(
-                    contentInfo.thumbnailUrl,
+                  ? FancyShimmerImage(
+                    imageUrl: contentInfo.thumbnailUrl,
                     width: double.infinity,
                     height: 290.h,
-                    fit: BoxFit.cover,
+                    boxFit: BoxFit.cover,
                     alignment: Alignment.center,
                     //오류 발생 시 기본 파일 보이도록
-                    errorBuilder: (context, error, stackTrace) {
-                      return Image.asset(
+                    errorWidget: Image.asset(
                         "assets/imgs/default_img.jpg",
                         width: double.infinity,
                         height: 300,
                         fit: BoxFit.cover,
                         alignment: Alignment.center,
-                      );
-                    },
+                      )
                   )
                   : Container(
                     width: double.infinity,
@@ -446,24 +446,22 @@ class EpisodeListItem extends StatelessWidget {
             contentInfo.contentType == MyContentType.Webtoon
                 ? ClipRRect(
                   borderRadius: BorderRadius.circular(8),
-                  child: Image.network(
-                    episodeInfo.thumbnailUrl,
+                  child: FancyShimmerImage(
+                    imageUrl: episodeInfo.thumbnailUrl,
 
                     width: 60.w,
                     height: 60.h,
 
-                    fit: BoxFit.cover,
+                    boxFit: BoxFit.cover,
                     alignment: Alignment.center,
                     //오류 발생 시 기본 파일 보이도록
-                    errorBuilder: (context, error, stackTrace) {
-                      return Image.asset(
-                        "assets/imgs/default_img.jpg",
-                        width: 60.w,
-                        height: 60.h,
-                        fit: BoxFit.cover,
-                        alignment: Alignment.center,
-                      );
-                    },
+                    errorWidget: Image.asset(
+                      "assets/imgs/default_img.jpg",
+                      width: 60.w,
+                      height: 60.h,
+                      fit: BoxFit.cover,
+                      alignment: Alignment.center,
+                    )
                   ),
                 )
                 : Container(

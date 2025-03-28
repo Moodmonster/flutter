@@ -58,6 +58,7 @@ class _HomeScreenState extends State<HomeScreen>
         backgroundColor: AppColors.background,
         resizeToAvoidBottomInset: false,
         body: SafeArea(
+          bottom: false,
           child: Container(
             color: AppColors.background,
             child: Column(

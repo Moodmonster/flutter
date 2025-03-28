@@ -1,3 +1,4 @@
+import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:inview_notifier_list/inview_notifier_list.dart';
@@ -68,6 +69,7 @@ class _WebtoonParagraphsShowScreenState
       },
       child: Scaffold(
         body: SafeArea(
+          bottom: false,
           child: Column(
             children: [
               _customWebtoonAppBar(
@@ -114,19 +116,17 @@ Widget _buildWebtoonParagraphsUI(
           tag: contentInfo.thumbnailUrl,
           child: ClipRRect(
             borderRadius: BorderRadius.circular(0),
-            child: Image.network(
-              contentInfo.thumbnailUrl,
+            child: FancyShimmerImage(
+              imageUrl: contentInfo.thumbnailUrl,
               width: double.infinity,
-              fit: BoxFit.fitWidth,
+              boxFit: BoxFit.fitWidth,
               alignment: Alignment.center,
-              errorBuilder: (context, error, stackTrace) {
-                return Image.asset(
+              errorWidget: Image.asset(
                   "assets/imgs/default_img.jpg",
                   width: double.infinity,
                   fit: BoxFit.fitWidth,
                   alignment: Alignment.center,
-                );
-              },
+                )
             ),
           ),
         ),
@@ -172,11 +172,9 @@ Widget _buildWebtoonParagraphsUI(
                       padding: EdgeInsets.only(bottom: 80.h),
                       child: Image.network(
                         imageUrl,
-                        fit: BoxFit.cover,
+                        fit: BoxFit.contain,
                         width: double.infinity,
-                        errorBuilder: (context, error, stackTrace) {
-                          return Image.asset("assets/imgs/default_img.jpg");
-                        },
+                        //errorWidget: Image.asset("assets/imgs/default_img.jpg")
                       ),
                     ),
                 ],
@@ -229,14 +227,14 @@ Container _customWebtoonAppBar({
       children: [
         IconButton(
           onPressed: () => AppRouter.pop(),
-          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
+          icon: const Icon(Icons.arrow_back_ios_new, color: AppColors.mainTextColor),
         ),
         Expanded(
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 8.w),
             child: Text(
               title,
-              style: const TextStyle(fontSize: 17, color: Colors.white),
+              style: const TextStyle(fontSize: 17, color: AppColors.mainTextColor),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
               softWrap: true,
@@ -248,8 +246,8 @@ Container _customWebtoonAppBar({
           onPressed: muteTap,
           icon:
               isMuted
-                  ? const Icon(Icons.music_off, color: Colors.white)
-                  : const Icon(Icons.music_note, color: Colors.white),
+                  ? const Icon(Icons.music_off, color: AppColors.mainTextColor)
+                  : const Icon(Icons.music_note, color: AppColors.mainTextColor),
         ),
       ],
     ),

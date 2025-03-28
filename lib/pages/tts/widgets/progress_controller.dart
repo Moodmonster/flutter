@@ -44,8 +44,8 @@ class ProgressController extends ConsumerWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(_formatDuration(audioState.audioPlayer.position)),
-                Text(_formatDuration(audioState.audioPlayer.duration ?? Duration.zero)),
+                Text(_formatDuration(audioState.audioPlayer.position), style: TextStyle(color: Colors.white),),
+                Text(_formatDuration(audioState.audioPlayer.duration ?? Duration.zero), style: TextStyle(color: Colors.white),),
               ],
             ),
           ),

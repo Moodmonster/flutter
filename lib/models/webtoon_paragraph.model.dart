@@ -7,7 +7,7 @@ part 'webtoon_paragraph.model.g.dart';
 abstract class WebtoonParagraph with _$WebtoonParagraph {
   factory WebtoonParagraph({
     required int displayOrder,
-    required String image_url,
+    required List<String> images, // ← 변경됨
     required String music_url,
   }) = _WebtoonParagraph;
 

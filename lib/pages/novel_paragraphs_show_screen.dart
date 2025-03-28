@@ -83,6 +83,7 @@ class _NovelParagraphsShowScreenState
       },
       child: Scaffold(
         body: SafeArea(
+          bottom: false,
           child: Column(
             children: [
               customNovelAppBar(
@@ -90,12 +91,13 @@ class _NovelParagraphsShowScreenState
                 isMuted: novelPageView.isMuted,
                 muteTap: () => novelController.handleMute(),
                 mp3ScreenTap: () {
+                  ref.read(audioControllerProvider.notifier).audioDispose();
                   ref
                       .read(audioControllerProvider.notifier)
                       .initScreen(
                         title: episodeInfo?.epTitle ?? "예시",
                         coverImg: contentInfo?.thumbnailUrl ?? "",
-                        ttsUrl: '',
+                        ttsUrl: episodeInfo?.ttsUrl ?? "",
                       );
                   AppRouter.pushNamed(Routes.novelTTS);
                 },

@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -9,6 +10,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:moodmonster/config/routes/app_router.dart';
 import 'package:moodmonster/config/routes/routes.dart';
+import 'package:moodmonster/core/local/local_storage_base.dart';
 import 'package:moodmonster/core/local/local_storage_keys.dart';
 import 'package:moodmonster/feature/error/data_null_screen.dart';
 import 'package:moodmonster/helpers/constants/app_colors.dart';
@@ -69,6 +71,7 @@ class _EpisodeListScreenState extends ConsumerState<EpisodeListScreen> {
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
+        bottom: false,
         child: episodeState.when(
           loading: () => Center(child: CircularProgressIndicator()),
           error:
@@ -80,7 +83,7 @@ class _EpisodeListScreenState extends ConsumerState<EpisodeListScreen> {
       //목차 추가 버튼 : 해당 콘텐츠 생성자가 본인일때만 보인다
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton:
-          contentInfo!.userId == PrefsKeys.userId
+          contentInfo!.userId == prefs.getIdToken()
               ? FloatingActionButton(
                 onPressed: () {
                   if (contentInfo?.contentType == MyContentType.Webtoon) {
@@ -127,22 +130,20 @@ class _EpisodeListScreenState extends ConsumerState<EpisodeListScreen> {
             children: [
               // 썸네일 사진
               contentInfo != null
-                  ? Image.network(
-                    contentInfo.thumbnailUrl,
+                  ? FancyShimmerImage(
+                    imageUrl: contentInfo.thumbnailUrl,
                     width: double.infinity,
                     height: 290.h,
-                    fit: BoxFit.cover,
+                    boxFit: BoxFit.cover,
                     alignment: Alignment.center,
                     //오류 발생 시 기본 파일 보이도록
-                    errorBuilder: (context, error, stackTrace) {
-                      return Image.asset(
+                    errorWidget: Image.asset(
                         "assets/imgs/default_img.jpg",
                         width: double.infinity,
                         height: 300,
                         fit: BoxFit.cover,
                         alignment: Alignment.center,
-                      );
-                    },
+                      )
                   )
                   : Container(
                     width: double.infinity,
@@ -277,6 +278,7 @@ class _EpisodeListScreenState extends ConsumerState<EpisodeListScreen> {
               );
             },
           ),
+          SizedBox(height: 20.h),
         ],
       ),
     );
@@ -359,7 +361,7 @@ class MenuButtonInEpoisodeList extends ConsumerWidget {
             .where(
               (value) =>
                   value != MenuType.Delete ||
-                  contentInfo!.userId == PrefsKeys.userId,
+                  contentInfo!.userId == prefs.getIdToken(),
             )
             .map(
               (value) => PopupMenuItem(
@@ -395,8 +397,9 @@ class EpisodeListItem extends StatelessWidget {
       child: ListTile(
         contentPadding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 10.w),
         //우측 삭제 버튼(작가가 본인일때만 보인다)
+        //PrefsKeys.userId
         trailing:
-            (contentInfo.userId == PrefsKeys.userId)
+            (contentInfo.userId == prefs.getIdToken())
                 ? IconButton(
                   onPressed: () {
                     ShowDialogHelper.showAlertWithActionAndCancel(
@@ -443,24 +446,22 @@ class EpisodeListItem extends StatelessWidget {
             contentInfo.contentType == MyContentType.Webtoon
                 ? ClipRRect(
                   borderRadius: BorderRadius.circular(8),
-                  child: Image.network(
-                    episodeInfo.thumbnailUrl,
+                  child: FancyShimmerImage(
+                    imageUrl: episodeInfo.thumbnailUrl,
 
                     width: 60.w,
                     height: 60.h,
 
-                    fit: BoxFit.cover,
+                    boxFit: BoxFit.cover,
                     alignment: Alignment.center,
                     //오류 발생 시 기본 파일 보이도록
-                    errorBuilder: (context, error, stackTrace) {
-                      return Image.asset(
-                        "assets/imgs/default_img.jpg",
-                        width: 60.w,
-                        height: 60.h,
-                        fit: BoxFit.cover,
-                        alignment: Alignment.center,
-                      );
-                    },
+                    errorWidget: Image.asset(
+                      "assets/imgs/default_img.jpg",
+                      width: 60.w,
+                      height: 60.h,
+                      fit: BoxFit.cover,
+                      alignment: Alignment.center,
+                    )
                   ),
                 )
                 : Container(
@@ -1316,34 +1317,31 @@ void _showAlertForAddWebtoonEpisode({
                                 FilePickerResult? result = await FilePicker
                                     .platform
                                     .pickFiles(
-                                      allowMultiple: true,
+                                      allowMultiple: false, // ✅ 하나만 선택 가능
                                       type: FileType.custom,
                                       allowedExtensions: ['jpg', 'jpeg', 'png'],
                                       withData: true,
                                     );
 
-                                if (result != null) {
+                                if (result != null && result.files.isNotEmpty) {
+                                  final file = result.files.first;
+
                                   setState(() {
-                                    selectedFiles.clear();
-                                    selectedFilesInWeb.clear();
-                                    selectedFileNames.clear();
+                                    selectedFileNames.add(file.name);
 
-                                    for (var file in result.files) {
-                                      selectedFileNames.add(file.name);
-
-                                      if (kIsWeb) {
-                                        if (file.bytes != null) {
-                                          selectedFilesInWeb.add(file.bytes!);
-                                        }
-                                      } else {
-                                        if (file.path != null) {
-                                          selectedFiles.add(File(file.path!));
-                                        }
+                                    if (kIsWeb) {
+                                      if (file.bytes != null) {
+                                        selectedFilesInWeb.add(file.bytes!);
+                                      }
+                                    } else {
+                                      if (file.path != null) {
+                                        selectedFiles.add(File(file.path!));
                                       }
                                     }
                                   });
                                 }
                               },
+
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
@@ -1353,7 +1351,7 @@ void _showAlertForAddWebtoonEpisode({
                                   ),
                                   SizedBox(width: 8),
                                   Text(
-                                    "Upload Multiple Images",
+                                    "Upload Image",
                                     style: TextStyle(color: AppColors.white),
                                   ),
                                 ],

@@ -1,15 +1,15 @@
+import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:inview_notifier_list/inview_notifier_list.dart';
 import 'package:moodmonster/config/routes/app_router.dart';
-import 'package:moodmonster/feature/error/data_null_screen.dart';
 import 'package:moodmonster/helpers/constants/app_colors.dart';
 import 'package:moodmonster/models/content.model.dart';
 import 'package:moodmonster/models/content_episode.model.dart';
 import 'package:moodmonster/models/webtoon_paragraph.model.dart';
 import 'package:moodmonster/providers/webtoon_paragraph.viewmodel.dart';
 import 'package:moodmonster/providers/webtoon_paragraph_provider.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class WebtoonParagraphsShowScreen extends ConsumerStatefulWidget {
   const WebtoonParagraphsShowScreen({super.key});
@@ -59,7 +59,7 @@ class _WebtoonParagraphsShowScreenState
     final viewModel = ref.watch(webtoonParagraphViewModelControllerProvider);
 
     if (episodeInfo == null || contentInfo == null) {
-      return const DataNullScreen();
+      return const Center(child: Text("Invalid episode or content info"));
     }
 
     return PopScope(
@@ -69,6 +69,7 @@ class _WebtoonParagraphsShowScreenState
       },
       child: Scaffold(
         body: SafeArea(
+          bottom: false,
           child: Column(
             children: [
               _customWebtoonAppBar(
@@ -87,7 +88,7 @@ class _WebtoonParagraphsShowScreenState
                       ),
                   loading:
                       () => const Center(child: CircularProgressIndicator()),
-                  error: (e, _) => Center(child: Text("Error: \$e")),
+                  error: (e, _) => Center(child: Text("Error: $e")),
                 ),
               ),
             ],
@@ -115,76 +116,98 @@ Widget _buildWebtoonParagraphsUI(
           tag: contentInfo.thumbnailUrl,
           child: ClipRRect(
             borderRadius: BorderRadius.circular(0),
-            child: Image.network(
-              contentInfo.thumbnailUrl,
+            child: FancyShimmerImage(
+              imageUrl: contentInfo.thumbnailUrl,
               width: double.infinity,
-              fit: BoxFit.fitWidth,
+              boxFit: BoxFit.fitWidth,
               alignment: Alignment.center,
-              errorBuilder: (context, error, stackTrace) {
-                return Image.asset(
+              errorWidget: Image.asset(
                   "assets/imgs/default_img.jpg",
                   width: double.infinity,
                   fit: BoxFit.fitWidth,
                   alignment: Alignment.center,
-                );
-              },
+                )
             ),
           ),
         ),
       ),
 
-      // 에피소드 제목 부분
       SliverPadding(
-        padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 35.h),
+        padding: EdgeInsets.only(
+          left: 15.w,
+          right: 15.w,
+          top: 25.h,
+          bottom: 35.h,
+        ),
         sliver: SliverToBoxAdapter(
           child: Container(
             width: double.infinity,
             alignment: Alignment.center,
             child: Text(
               episodeInfo.epTitle,
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 24,
+                color: AppColors.mainTextColor,
+              ),
               softWrap: true,
             ),
           ),
         ),
       ),
-
       SliverList(
         delegate: SliverChildBuilderDelegate((context, index) {
           return InViewNotifierWidget(
             id: '$index',
             builder: (context, isInView, _) {
-              return Padding(
-                padding: EdgeInsets.only(bottom: 90.h),
-                child: _webtoonParagraphItem(
-                  isInView: isInView,
-                  controller: controller,
-                  paragraph: paragraphs[index],
-                ),
+              if (isInView && paragraphs[index].music_url.isNotEmpty) {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  controller.playAudio(paragraphs[index].music_url);
+                });
+              }
+              return Column(
+                children: [
+                  for (final imageUrl in paragraphs[index].images)
+                    Padding(
+                      padding: EdgeInsets.only(bottom: 80.h),
+                      child: Image.network(
+                        imageUrl,
+                        fit: BoxFit.contain,
+                        width: double.infinity,
+                        //errorWidget: Image.asset("assets/imgs/default_img.jpg")
+                      ),
+                    ),
+                ],
               );
             },
           );
         }, childCount: paragraphs.length),
       ),
-      SliverToBoxAdapter(child: SizedBox(height: 300.h)),
-    ],
-  );
-}
-
-Column _webtoonParagraphItem({
-  required bool isInView,
-  required WebtoonParagraphViewModelController controller,
-  required WebtoonParagraph paragraph,
-}) {
-  if (isInView && paragraph.music_url.isNotEmpty) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      controller.playAudio(paragraph.music_url);
-    });
-  }
-  return Column(
-    children: [
-      SizedBox(height: 8.h),
-      if (paragraph.image_url.isNotEmpty) Image.network(paragraph.image_url),
+      SliverToBoxAdapter(child: SizedBox(height: 200.h)),
+      SliverPadding(
+        padding: EdgeInsets.only(
+          left: 15.w,
+          right: 15.w,
+          top: 25.h,
+          bottom: 35.h,
+        ),
+        sliver: SliverToBoxAdapter(
+          child: Container(
+            width: double.infinity,
+            alignment: Alignment.center,
+            child: Text(
+              "To be continued...",
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 24,
+                color: AppColors.mainTextColor,
+              ),
+              softWrap: true,
+            ),
+          ),
+        ),
+      ),
+      SliverToBoxAdapter(child: SizedBox(height: 230.h)),
     ],
   );
 }
@@ -204,20 +227,27 @@ Container _customWebtoonAppBar({
       children: [
         IconButton(
           onPressed: () => AppRouter.pop(),
-          icon: const Icon(Icons.arrow_back_ios_new),
+          icon: const Icon(Icons.arrow_back_ios_new, color: AppColors.mainTextColor),
         ),
         Expanded(
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 8.w),
-            child: Text(title, style: const TextStyle(fontSize: 17)),
+            child: Text(
+              title,
+              style: const TextStyle(fontSize: 17, color: AppColors.mainTextColor),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              softWrap: true,
+              textAlign: TextAlign.center,
+            ),
           ),
         ),
         IconButton(
           onPressed: muteTap,
           icon:
               isMuted
-                  ? const Icon(Icons.music_off)
-                  : const Icon(Icons.music_note),
+                  ? const Icon(Icons.music_off, color: AppColors.mainTextColor)
+                  : const Icon(Icons.music_note, color: AppColors.mainTextColor),
         ),
       ],
     ),
